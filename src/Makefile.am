@@ -23,4 +23,4 @@ module_DATA =			\
 desktop_DATA =                  \
 	tftp-server.desktop
 
-EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(config_DATA) $(module_DATA)
+EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(config_DATA) $(module_DATA) $(desktop_DATA)
