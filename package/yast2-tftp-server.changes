@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 15 16:48:07 CEST 2003 - jsrain@suse.de
+
+- let yast modules in kcontrol work again (adrian@suse.de)
+- 2.8.5
+
+-------------------------------------------------------------------
 Thu Sep  4 21:41:54 CEST 2003 - nashif@suse.de
 
 - Fixed #30098: Fixed to work with autoyast
