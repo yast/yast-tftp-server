@@ -1,5 +1,17 @@
+Read	.target.size "/etc/install.inf" nil
+Read	.etc.install_inf.Sourcemounted nil
+Read	.etc.install_inf.AutoYaST nil
+Read	.etc.install_inf.Repair nil
+Read	.etc.install_inf.Demo nil
+Read	.etc.install_inf.Textmode nil
+Read	.etc.install_inf.Manual nil
+Read	.target.string "/proc/cmdline" nil
+Read	.etc.install_inf.Console nil
+Read	.etc.install_inf.Braille nil
+Read	.etc.install_inf.VNC nil
+Read	.etc.install_inf.UseSSH nil
+Read	.etc.install_inf.InstMode nil
 Execute	.target.bash_output "/usr/bin/lsof -i :tftp -Fc" $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
-Log	Runlevel module is deprecated, use Service instead
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Dir	.etc.xinetd_d.tftp.section: ["tftp"]
@@ -17,12 +29,12 @@ Write	.etc.xinetd_d.tftp.value.tftp.server "/usr/sbin/in.tftpd" true
 Write	.etc.xinetd_d.tftp.value.tftp.server_args "-v -s /srv/boot" true
 Write	.etc.xinetd_d.tftp nil true
 Execute	.target.mkdir "/srv/boot" 0
-Log	Runlevel module is deprecated, use Service instead
+Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Read	.init.scripts.comment "xinetd" $["inetd":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
-Log	Runlevel module is deprecated, use Service instead
+Read	.init.scripts.exists "xinetd" true
 Execute	.target.bash "/etc/init.d/xinetd restart" $["TERM":"raw"] 0
 Return	true

@@ -6,8 +6,9 @@
  * $Id$
  */
 {
+    // testedfiles: TftpServer.ycp Service.ycp Testsuite.ycp
+
     include "testsuite.ycp";
-    //import "Pkg"; // override
     import "TftpServer";
 
 

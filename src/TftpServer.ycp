@@ -15,7 +15,7 @@
 module "TftpServer";
 textdomain "tftp-server";
 
-import "Runlevel";
+import "Service";
 import "Report";
 import "Summary";
 
@@ -86,7 +86,7 @@ global define boolean Read () ``{
     lines = filter (string l, lines, ``( l != "xinetd" && l != "in.tftpd" ));
     foreign_servers = mergestring (lines, ", ");
 
-    boolean xinetd_start = Runlevel::ServiceEnabled ("xinetd");
+    boolean xinetd_start = Service::Enabled ("xinetd");
 
     // is the config file there at all?
     list<string> sections = (list<string>) SCR::Dir (.etc.xinetd_d.tftp.section);
@@ -168,7 +168,7 @@ global define boolean WriteOnly () ``{
     // enable and (re)start xinetd
     if (start)
     {
-	Runlevel::ServiceAdjust ("xinetd", "enable");
+	Service::Enable ("xinetd");
     }
     else
     {
@@ -202,14 +202,14 @@ global define boolean Write () ``{
 
     if (start)
     {
-	Runlevel::RunInitScript ("xinetd", "restart");
+	Service::Restart ("xinetd");
     }
     else
     {
 	// xinetd may be needed for other services so we never turn it
 	// off. It will exit anyway if no services are configured.
 	// If it is running, restart it.
-	Runlevel::RunInitScript ("xinetd", "try-restart");
+	Service::RunInitScript ("xinetd", "try-restart");
     }
 
     return true;
