@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Sep  3 15:57:51 CEST 2004 - mvidner@suse.cz
+
+- Added GetModified, SetModified for autoyast (#43904).
+- 2.10.3
+
+-------------------------------------------------------------------
 Fri Aug 27 11:24:16 CEST 2004 - mvidner@suse.cz
 
 - Use LogView to display the log as it grows.

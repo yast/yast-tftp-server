@@ -42,7 +42,7 @@ map param = $[];
 if(size(WFM::Args()) > 0 && is(WFM::Args(0), string)) {
     func = (string) WFM::Args(0);
     if(size(WFM::Args()) > 1 && is(WFM::Args(1), map))
-        param = (map) WFM::Args(1);
+	param = (map) WFM::Args(1);
 }
 y2debug("func=%1", func);
 y2debug("param=%1", param);
@@ -85,6 +85,12 @@ else if (func == "Write") {
     Progress::off();
     ret = TftpServer::Write();
     Progress::on();
+}
+else if (func == "SetModified") {
+    ret = TftpServer::SetModified ();
+}
+else if (func == "GetModified") {
+    ret = TftpServer::GetModified ();
 }
 /* Unknown function */
 else {

@@ -4,8 +4,7 @@ yncludedir = @yncludedir@/tftp-server
 
 client_DATA =			\
 	tftp-server.ycp		\
-	tftp-server_auto.ycp	\
-	tftp-server_write.ycp
+	tftp-server_auto.ycp
 
 
 ynclude_DATA =			\

@@ -21,6 +21,30 @@ import "Summary";
 import "SuSEFirewall";
 
 /**
+ * Any settings modified?
+ * As we have only a single dialog which handles it by itself,
+ * it is used only by autoinst cloning.
+ */
+boolean modified = false;
+
+/**
+ * Returns true if the settings were modified
+ * @return settings were modified
+ */
+global boolean GetModified () {
+    return modified;
+}
+
+/**
+ * Function sets an internal variable indicating that any
+ * settings were modified to "true".
+ * Used for autoinst cloning.
+ */
+global void SetModified () {
+    modified = true;
+}
+    
+/**
  * Required packages for operation
  */
 global list required_packages = ["xinetd", "tftp"];
