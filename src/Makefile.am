@@ -18,6 +18,11 @@ module_DATA =			\
 desktop_DATA =                  \
 	tftp-server.desktop
 
+tftp-server:
+	ln -sf . $@
+
+ycpchook = tftp-server
+
 EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(module_DATA) $(desktop_DATA)
 
 include $(top_srcdir)/Makefile.am.common
