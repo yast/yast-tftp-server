@@ -15,9 +15,10 @@
 module "TftpServer";
 textdomain "tftp-server";
 
-import "Service";
 import "Report";
+import "Service";
 import "Summary";
+import "SuSEFirewall";
 
 /**
  * Required packages for operation
@@ -103,6 +104,8 @@ global define boolean Read () ``{
 
     ParseServerArgs (server_args);
 
+    SuSEFirewall::Read ();
+
     return true;
 }
 
@@ -176,6 +179,8 @@ global define boolean WriteOnly () ``{
 	// off.
     }
 
+    SuSEFirewall::WriteOnly ();
+
     return true;
 }
 
@@ -211,6 +216,8 @@ global define boolean Write () ``{
 	// If it is running, restart it.
 	Service::RunInitScript ("xinetd", "try-restart");
     }
+
+    SuSEFirewall::ActivateConfiguration ();
 
     return true;
 }
@@ -289,7 +296,7 @@ global define string Summary () ``{
 }
 
 /**
- * Return needed packages and packages to be removed 
+ * Return needed packages and packages to be removed
  * during autoinstallation.
  * @return map of lists.
  *

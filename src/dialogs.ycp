@@ -11,6 +11,7 @@
 
 textdomain "tftp-server";
 
+import "CWMFirewallInterfaces";
 import "Label";
 import "Mode";
 import "Popup";
@@ -30,16 +31,16 @@ define boolean CheckDirectorySyntax (string dir);
 
 define symbol Packages() ``{
 
-   if (!Require::RequireAndConflictTarget (["xinetd", "tftp"], [],
+    if (!Require::RequireAndConflictTarget (["xinetd", "tftp"], [],
 	    // notification 1/2
 	    _("<p>To configure the TFTP server, the packages <b>xinetd</b> and <b>tftp</b> must be installed.</p>") +
 	    // notification 2/2
 	    _("<p>Install them now?</p>")))
     {
-        return `abort;
+	return `abort;
     }
 
-	return `next;
+   return `next;
 }
 
 /**
@@ -82,8 +83,16 @@ define symbol MainDialog () ``{
     /* Tftp-server dialog caption */
     string caption = _("TFTP Server Configuration");
 
+    // firewall widget using CWM
+    map<string, any> fw_settings = $[
+	"services": [ "tftp" ],
+	"display_details": true,
+	];
+    map<string,any> fw_cwm_widget = CWMFirewallInterfaces::CreateOpenFirewallWidget (fw_settings);
+
     // dialog help text
     string help_text = _("<p>Here, a server for TFTP (Trivial File Transfer Protocol) can be enabled. It will be started using xinetd.</p>");
+    help_text = help_text + fw_cwm_widget["help"]:"";
     // dialog help text
     help_text = help_text + _("<p>Specify the directory where served files are located. The usual value is <tt>/tftpboot</tt>. It will be created if it does not exist. The server will use it as its root directory (using the <tt>-s</tt> option).</p>");
 
@@ -104,6 +113,8 @@ define symbol MainDialog () ``{
 		    )
 		),
 	    `VSpacing (1),
+	    fw_cwm_widget["custom_widget"]:`Empty (),
+	    `VSpacing (1),
 	    TextAndButton (
 		// Text entry label
 		// Directory where served files (usually boot images) reside
@@ -122,18 +133,26 @@ define symbol MainDialog () ``{
     Wizard::SetContentsButtons(caption, contents, help_text,
 	    Label::BackButton(), Label::FinishButton());
 
+    // initialize the widget (set the current value)
+    CWMFirewallInterfaces::OpenFirewallInit (fw_cwm_widget, "");
+
+    UI::ChangeWidget (`id (`viewlog), `Enabled, !Mode::config);
+    map event = nil;
     any ret = nil;
-	UI::ChangeWidget (`id (`viewlog), `Enabled, !Mode::config);
     repeat
     {
 	UI::ChangeWidget (`id (`directory), `Enabled, start);
 	UI::ChangeWidget (`id (`browse), `Enabled, start);
 
-	ret = UI::UserInput();
+	event = UI::WaitForEvent ();
+	ret = event["ID"]:nil;
 	if (ret == `cancel)
 	{
 	    ret = `abort;
 	}
+
+	// handle the events, enable/disable the button, show the popup if button clicked
+	CWMFirewallInterfaces::OpenFirewallHandle (fw_cwm_widget, "", event);
 
 	start = (UI::QueryWidget (`id (`rbg), `CurrentButton) == `tftpyes);
 	directory = (string) UI::QueryWidget (`id (`directory), `Value);
@@ -141,6 +160,7 @@ define symbol MainDialog () ``{
 	// discard the difference in disabled fields:
 	// directory is only considered if start is on
 	changed =
+	    true ||		// TODO: fw changed, #44106
 	    start != TftpServer::start ||
 	    (start && directory != TftpServer::directory);
 
@@ -188,6 +208,9 @@ and must not contain spaces."));
 
     if (ret == `next)
     {
+	// grab current settings, store them to SuSEFirewall::
+	CWMFirewallInterfaces::OpenFirewallStore (fw_cwm_widget, "", event);
+
 	TftpServer::start = start;
 	if (start)
 	{

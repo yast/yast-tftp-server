@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Aug 23 16:38:32 CEST 2004 - mvidner@suse.cz
+
+- Added Open Firewall button.
+- 2.10.1
+
+-------------------------------------------------------------------
 Thu Jun 17 11:17:27 CEST 2004 - mvidner@suse.cz
 
 - Added "testedfiles" to test cases to make it work with the new testsuite.
