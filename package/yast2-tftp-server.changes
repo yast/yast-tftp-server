@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Feb 25 16:34:53 CET 2005 - visnov@suse.cz
+
+- Implemented trivial command line interface
+- 2.11.3
+
+-------------------------------------------------------------------
 Mon Jan 31 14:10:25 CET 2005 - mvidner@suse.cz
 
 - Adjusted testsuite for changes in firewall (build fix).

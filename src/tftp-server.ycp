@@ -23,10 +23,17 @@ y2milestone ("Tftp-server module started");
 
 include "tftp-server/wizards.ycp";
 
+import "CommandLine";
+
+map cmdline_description = $[
+    "id"        : "tftp-server",
+    "guihandler"        : TftpServerSequence,
+];
+
 /* main ui function */
 any ret = nil;
 
-ret = TftpServerSequence();
+ret = CommandLine::Run (cmdline_description);
 y2debug("ret=%1", ret);
 
 /* Finish */
