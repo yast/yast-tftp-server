@@ -65,7 +65,7 @@ global define symbol TftpServerSequence() ``{
     any ret = WizardSequencer(aliases, sequence);
 
     UI::CloseDialog();
-    return ret;
+    return (symbol) ret;
 }
 
 /**
@@ -103,7 +103,7 @@ global define symbol TftpServerAutoSequence() ``{
     any ret = WizardSequencer(aliases, sequence);
 
     UI::CloseDialog();
-    return ret;
+    return (symbol) ret;
 }
 
 /* EOF */

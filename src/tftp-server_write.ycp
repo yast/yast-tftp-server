@@ -43,6 +43,6 @@
     return
 	// read so that we have other_args
 	TftpServer::Read () &&
-	TftpServer::Import (WFM::Args (0)) &&
+	TftpServer::Import ((map) WFM::Args (0)) &&
 	TftpServer::WriteOnly ();
 }

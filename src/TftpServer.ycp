@@ -56,12 +56,12 @@ global string foreign_servers = "";
  */
 global define void ParseServerArgs (string server_args) ``{
     // extract the last argument and kick "-s".
-    list(string) server_args_l = filter (string s,
+    list<string> server_args_l = filter (string s,
 					 splitstring (server_args, " \t"),
 					 ``( s != ""));
     integer sz = size (server_args_l);
     integer i = 0;
-    list(string) other_args_l = filter (string s, server_args_l, ``{
+    list<string> other_args_l = filter (string s, server_args_l, ``{
 	i = i + 1;
 	return s != "-s" && i != sz;
     });
@@ -76,8 +76,8 @@ global define void ParseServerArgs (string server_args) ``{
 global define boolean Read () ``{
     // foreign_servers:
     // get command names via lsof, filter out xinetd and in.tftpd
-    map out = SCR::Execute (.target.bash_output, "/usr/bin/lsof -i :tftp -Fc");
-    list(string) lines = splitstring (out["stdout"]:"", "\n");
+    map out = (map) SCR::Execute (.target.bash_output, "/usr/bin/lsof -i :tftp -Fc");
+    list<string> lines = splitstring (out["stdout"]:"", "\n");
     // the command is field 'c'
     lines = filter (string l, lines, ``( substring (l, 0, 1) == "c" ));
     // strip the c
@@ -89,11 +89,11 @@ global define boolean Read () ``{
     boolean xinetd_start = Runlevel::ServiceEnabled ("xinetd");
 
     // is the config file there at all?
-    list(string) sections = SCR::Dir (.etc.xinetd_d.tftp.section);
-    string disable = SCR::Read (.etc.xinetd_d.tftp.value.tftp.disable);
+    list<string> sections = (list<string>) SCR::Dir (.etc.xinetd_d.tftp.section);
+    string disable = (string) SCR::Read (.etc.xinetd_d.tftp.value.tftp.disable);
     start = xinetd_start && sections != [] && disable != "yes";
 
-    string server_args = SCR::Read (.etc.xinetd_d.tftp.value.tftp.server_args);
+    string server_args = (string) SCR::Read (.etc.xinetd_d.tftp.value.tftp.server_args);
     if (server_args == nil)
     {
 	// default

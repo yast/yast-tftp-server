@@ -14,11 +14,15 @@ textdomain "tftp-server";
 import "TftpServer";
 import "Wizard";
 
-include "ui/file_popups.ycp";
+//include "ui/file_popups.ycp";
 import "Popup";
 import "Label";
 import "Require";
+import "Mode";
 
+global define term TextAndButton (term text, term button);
+global define void ViewLogPopup ();
+global define boolean CheckDirectorySyntax (string dir);
 
 
 /**
@@ -134,7 +138,7 @@ global define symbol MainDialog () ``{
 	}
 
 	start = (UI::QueryWidget (`id (`rbg), `CurrentButton) == `tftpyes);
-	directory = UI::QueryWidget (`id (`directory), `Value);
+	directory = (string) UI::QueryWidget (`id (`directory), `Value);
 
 	// discard the difference in disabled fields:
 	// directory is only considered if start is on
@@ -144,8 +148,8 @@ global define symbol MainDialog () ``{
 
 	if (ret == `browse)
 	{
-	    directory = PopupDir (directory != ""? directory: "/");
-	    if (directory != "")
+	    directory = UI::AskForExistingDirectory(directory != ""? directory: "/", "");
+	    if (directory != nil)
 	    {
 		UI::ChangeWidget (`id (`directory), `Value, directory);
 	    }
@@ -194,7 +198,7 @@ and must not contain spaces."));
     }
 
     Wizard::RestoreScreenShotName ();
-    return ret;
+    return (symbol) ret;
 }
 
 /**
@@ -203,7 +207,7 @@ and must not contain spaces."));
  * and uses Popup::ShowFile on it
  */
 global define void ViewLogPopup () ``{
-    string tmpdir = SCR::Read (.target.tmpdir);
+    string tmpdir = (string) SCR::Read (.target.tmpdir);
     string tmpfile = tmpdir + "/tftp-log";
     string command = "/usr/bin/grep -i tftp /var/log/messages";
     SCR::Execute (.target.bash, command + " > " + tmpfile);
