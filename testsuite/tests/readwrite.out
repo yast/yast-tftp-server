@@ -26,5 +26,4 @@ Read	.init.scripts.comment "xinetd" $["inetd":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
 Read	.init.scripts.exists "xinetd" true
 Execute	.target.bash "/etc/init.d/xinetd restart" $["TERM":"raw"] 0
-Execute	.target.bash "/etc/init.d/SuSEfirewall2_final start" $["TERM":"raw"] 0
 Return	true
