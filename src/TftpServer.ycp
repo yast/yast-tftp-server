@@ -43,11 +43,11 @@ global boolean GetModified () {
 global void SetModified () {
     modified = true;
 }
-    
+
 /**
  * Required packages for operation
  */
-global list required_packages = ["xinetd", "tftp"];
+global list<string> required_packages = ["xinetd", "tftp"];
 
 /**
  * Start tftpd via xinetd?
