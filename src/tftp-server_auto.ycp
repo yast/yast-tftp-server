@@ -49,7 +49,7 @@ y2debug("param=%1", param);
 
 /* Create a summary*/
 if(func == "Summary") {
-    ret = select(TftpServer::Summary(), 0, "");
+    ret = TftpServer::Summary();
 }
 /* Reset configuration */
 else if (func == "Reset") {
@@ -88,6 +88,8 @@ else {
     y2error("Unknown function: %1", func);
     ret = false;
 }
+
+return ret;
 
 y2debug("ret=%1", ret);
 y2milestone("TftpServer auto finished");
