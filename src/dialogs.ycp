@@ -15,8 +15,8 @@ import "TftpServer";
 import "Wizard";
 
 include "ui/file_popups.ycp";
-include "ui/common_popups.ycp";
-include "ui/common_messages.ycp";
+import "Popup";
+import "Label";
 
 /**
  * Use rpm -q to query packages
@@ -51,7 +51,7 @@ global define symbol ReadDialog() ``{
 
     if (TftpServer::foreign_servers != "")
     {
-	UI::ErrorPopup (TftpServer::ForeignServersError ());
+	Popup::Error (TftpServer::ForeignServersError ());
 	ret = false;
     }
     return ret ? `next : `abort;
@@ -118,7 +118,7 @@ global define symbol MainDialog () ``{
 	    );
 
     Wizard::SetContentsButtons(caption, contents, help_text,
-	    BackButtonLabel(), FinishButtonLabel());
+	    Label::BackButton(), Label::FinishButton());
 
     any ret = nil;
     repeat
@@ -165,7 +165,7 @@ global define symbol MainDialog () ``{
 		{
 		    // the dir does not exist
 		    // yes-no popup
-		    ret = UI::YesNoPopup(_("The directory does not exist.
+		    ret = Popup::YesNo(_("The directory does not exist.
 Create it?")) ? ret : nil;
 		}
 	    }
@@ -173,7 +173,7 @@ Create it?")) ? ret : nil;
 	    {
 		UI::SetFocus (`id (`directory));
 		// error popup
-		UI::ErrorPopup (_("The directory must start with a slash (/)
+		Popup::Error (_("The directory must start with a slash (/)
 and must not contain spaces."));
 		ret = nil;
 	    }
@@ -181,7 +181,7 @@ and must not contain spaces."));
     }
     until (ret == `next ||
 	   ((ret == `back || ret == `abort) &&
-	    (!changed || UI::ReallyAbortPopup (true))));
+	    (!changed || Popup::ReallyAbort (true))));
 
     if (ret == `next)
     {
@@ -199,7 +199,7 @@ and must not contain spaces."));
 /**
  * Display a log in a popup
  * greps tftp from /var/log/messages to a temporary file
- * and uses ShowFilePopup on it
+ * and uses Popup::ShowFile on it
  */
 global define void ViewLogPopup () ``{
     string tmpdir = SCR::Read (.target.tmpdir);
@@ -210,7 +210,7 @@ global define void ViewLogPopup () ``{
     // %1 is a command like "grep foo file"
     // snapshot means that the dialog will not display log items
     // added since the dialog was displayed
-    ShowFilePopup (sformat (_("Output of '%1' (snapshot)"), command), tmpfile);
+    Popup::ShowFile (sformat (_("Output of '%1' (snapshot)"), command), tmpfile);
     SCR::Execute (.target.remove, tmpfile);
 }
 

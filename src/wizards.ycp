@@ -13,8 +13,8 @@ textdomain "tftp-server";
 
 import "Wizard";
 
-include "ui/common_popups.ycp";
-include "ui/common_messages.ycp";
+import "Popup";
+import "Label";
 include "wizard/sequencer.ycp";
 
 include "tftp-server/dialogs.ycp";
@@ -53,7 +53,7 @@ global define symbol TftpServerSequence() ``{
 
     Wizard::CreateDialog();
     Wizard::SetContentsButtons(caption, contents, "",
-	    BackButtonLabel(), NextButtonLabel());
+	    Label::BackButton(), Label::NextButton());
 
     any ret = WizardSequencer(aliases, sequence);
 
