@@ -11,19 +11,18 @@
 
 textdomain "tftp-server";
 
+import "Label";
+import "Popup";
 import "Wizard";
 
-import "Popup";
-import "Label";
 include "wizard/sequencer.ycp";
-
 include "tftp-server/dialogs.ycp";
 
 /**
  * Whole configuration of tftp-server
  * @return sequence result
  */
-global define symbol TftpServerSequence() ``{
+define symbol TftpServerSequence() ``{
 
     map aliases = $[
 	"packages"	: [ ``( Packages() ), true ],
@@ -72,7 +71,7 @@ global define symbol TftpServerSequence() ``{
  * Whole configuration of tftp-server
  * @return sequence result
  */
-global define symbol TftpServerAutoSequence() ``{
+define symbol TftpServerAutoSequence() ``{
 
     map aliases = $[
 	"packages"	: [ ``( Packages() ), true ],

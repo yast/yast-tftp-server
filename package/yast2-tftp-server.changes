@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb  2 20:33:48 CET 2004 - msvec@suse.cz
+
+- NI adaption
+- 2.9.0
+
+-------------------------------------------------------------------
 Mon Sep 15 16:48:07 CEST 2003 - jsrain@suse.de
 
 - let yast modules in kcontrol work again (adrian@suse.de)

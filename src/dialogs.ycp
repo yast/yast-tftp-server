@@ -11,17 +11,16 @@
 
 textdomain "tftp-server";
 
+import "Label";
+import "Mode";
+import "Popup";
+import "Require";
 import "TftpServer";
 import "Wizard";
 
-import "Popup";
-import "Label";
-import "Require";
-import "Mode";
-
-global define term TextAndButton (term text, term button);
-global define void ViewLogPopup ();
-global define boolean CheckDirectorySyntax (string dir);
+define term TextAndButton (term text, term button);
+define void ViewLogPopup ();
+define boolean CheckDirectorySyntax (string dir);
 
 
 /**
@@ -29,7 +28,7 @@ global define boolean CheckDirectorySyntax (string dir);
  * @return `abort if aborted and `next otherwise
  */
 
-global define symbol Packages() ``{
+define symbol Packages() ``{
 
    if (!Require::RequireAndConflictTarget (["xinetd", "tftp"], [],
 	    // notification 1/2
@@ -47,7 +46,7 @@ global define symbol Packages() ``{
  * Read settings dialog
  * @return `abort if aborted and `next otherwise
  */
-global define symbol ReadDialog() ``{
+define symbol ReadDialog() ``{
     boolean ret = true;
 
     ret = ret && TftpServer::Read();
@@ -64,7 +63,7 @@ global define symbol ReadDialog() ``{
  * Write settings dialog
  * @return `abort if aborted and `next otherwise
  */
-global define symbol WriteDialog() ``{
+define symbol WriteDialog() ``{
     boolean ret = TftpServer::Write();
     return ret ? `next : `abort;
 }
@@ -73,7 +72,7 @@ global define symbol WriteDialog() ``{
  * Main dialog
  * @return dialog result
  */
-global define symbol MainDialog () ``{
+define symbol MainDialog () ``{
     Wizard::SetScreenShotName ("tftp-server-1-main");
 
     boolean start = TftpServer::start;
@@ -205,7 +204,7 @@ and must not contain spaces."));
  * greps tftp from /var/log/messages to a temporary file
  * and uses Popup::ShowFile on it
  */
-global define void ViewLogPopup () ``{
+define void ViewLogPopup () ``{
     string tmpdir = (string) SCR::Read (.target.tmpdir);
     string tmpfile = tmpdir + "/tftp-log";
     string command = "/usr/bin/grep -i tftp /var/log/messages";
@@ -225,7 +224,7 @@ global define void ViewLogPopup () ``{
  * @param button pushbutton widget
  * @return a HBox
  */
-global define term TextAndButton (term text, term button) ``{
+define term TextAndButton (term text, term button) ``{
     return `HBox (
 	`Bottom (text),
 	`HSpacing(0.5),
@@ -238,7 +237,7 @@ global define term TextAndButton (term text, term button) ``{
  * @param dir directory path
  * @return valid?
  */
-global define boolean CheckDirectorySyntax (string dir) ``{
+define boolean CheckDirectorySyntax (string dir) ``{
     return (substring (dir, 0, 1) == "/" && filterchars (" \t", dir) == "");
 }
 

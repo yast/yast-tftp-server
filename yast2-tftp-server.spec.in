@@ -7,7 +7,7 @@ Requires:	lsof
 
 BuildArchitectures:	noarch
 
-Summary:	Configuration of tftp-server
+Summary:	Configuration of TFTP server
 
 %description
 -
@@ -25,7 +25,7 @@ Summary:	Configuration of tftp-server
 %dir @yncludedir@/tftp-server
 @yncludedir@/tftp-server/*
 @clientdir@/tftp-server*.ycp
-@moduledir@/TftpServer.ycp
+@moduledir@/TftpServer.*
 @desktopdir@/tftp-server.desktop
 @configdir@/tftp-server.y2cc
 @scrconfdir@/etc_xinetd_d_tftp.scr
