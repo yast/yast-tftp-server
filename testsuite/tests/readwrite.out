@@ -1,4 +1,5 @@
 Execute	.target.bash_output "/usr/bin/lsof -i :tftp -Fc" $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
+Log	Runlevel module is deprecated, use Service instead
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Dir	.etc.xinetd_d.tftp.section: ["tftp"]
@@ -16,10 +17,12 @@ Write	.etc.xinetd_d.tftp.value.tftp.server "/usr/sbin/in.tftpd" true
 Write	.etc.xinetd_d.tftp.value.tftp.server_args "-v -s /srv/boot" true
 Write	.etc.xinetd_d.tftp nil true
 Execute	.target.mkdir "/srv/boot" 0
+Log	Runlevel module is deprecated, use Service instead
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Read	.init.scripts.comment "xinetd" $["inetd":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
+Log	Runlevel module is deprecated, use Service instead
 Execute	.target.bash "/etc/init.d/xinetd restart" $["TERM":"raw"] 0
 Return	true
