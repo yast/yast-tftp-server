@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr  2 15:23:12 CEST 2004 - mvidner@suse.cz
+
+- changed license to GPL
+- 2.9.4
+
+-------------------------------------------------------------------
 Wed Mar 31 17:12:23 CEST 2004 - mvidner@suse.cz
 
 - fixed make check-syntax
