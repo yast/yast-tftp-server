@@ -75,16 +75,16 @@ else if (func == "Export") {
 /* Read current state */
 else if (func == "Read") {
     import "Progress";
-    Progress::off();
+    boolean progress_orig = Progress::set (false);
     ret = TftpServer::Read();
-    Progress::on();
+    Progress::set (progress_orig);
 }
 /* Write givven settings */
 else if (func == "Write") {
     import "Progress";
-    Progress::off();
+    boolean progress_orig = Progress::set (false);
     ret = TftpServer::Write();
-    Progress::on();
+    Progress::set (progress_orig);
 }
 else if (func == "SetModified") {
     ret = TftpServer::SetModified ();
