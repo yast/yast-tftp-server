@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Sep  4 21:41:54 CEST 2003 - nashif@suse.de
+
+- Fixed #30098: Fixed to work with autoyast
+- Use Require module
+
+-------------------------------------------------------------------
 Fri Aug 29 10:39:45 CEST 2003 - jsrain@suse.de
 
 - added .desktop file

@@ -58,11 +58,15 @@ else if (func == "Reset") {
 }
 /* Change configuration (run AutoSequence) */
 else if (func == "Change") {
-    ret = TftpServerSequence();
+    ret = TftpServerAutoSequence();
 }
 /* Import configuration */
 else if (func == "Import") {
     ret = TftpServer::Import(param);
+}
+/* Return package list */
+else if (func == "Packages") {
+    ret = TftpServer::AutoPackages();
 }
 /* Return actual state */
 else if (func == "Export") {

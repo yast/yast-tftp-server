@@ -20,6 +20,11 @@ import "Report";
 import "Summary";
 
 /**
+ * Required packages for operation
+ */
+global list required_packages = ["xinetd", "tftp"];
+
+/**
  * Start tftpd via xinetd?
  */
 global boolean start = false;
@@ -282,6 +287,21 @@ global define string Summary () ``{
 
     return summary;
 }
+
+/**
+ * Return needed packages and packages to be removed 
+ * during autoinstallation.
+ * @return map of lists.
+ *
+**/
+
+global  define map AutoPackages() ``{
+   list install_pkgs = required_packages;
+   list remove_pkgs = [];
+   return ($["install": install_pkgs, "remove": remove_pkgs]);
+}
+
+
 
 /* EOF */
 }

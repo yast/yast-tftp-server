@@ -17,14 +17,27 @@ import "Wizard";
 include "ui/file_popups.ycp";
 import "Popup";
 import "Label";
+import "Require";
+
+
 
 /**
- * Use rpm -q to query packages
- * @param pkg eg. "tftp", "xinetd"
- * @return boolean true if is installed
+ * Check for required packaged to be installed
+ * @return `abort if aborted and `next otherwise
  */
-global define boolean isInstalled (string pkg) ``{
-    return SCR::Execute (.target.bash, "/bin/rpm -q " + pkg) == 0;
+
+global define symbol Packages() ``{
+
+   if (!Require::RequireAndConflictTarget (["xinetd", "tftp"], [],
+	    // notification 1/2
+	    _("<p>To configure the TFTP server, the packages <b>xinetd</b> and <b>tftp</b> must be installed.</p>") +
+	    // notification 2/2
+	    _("<p>Install them now?</p>")))
+    {
+        return `abort;
+    }
+
+	return `next;
 }
 
 /**
@@ -33,20 +46,6 @@ global define boolean isInstalled (string pkg) ``{
  */
 global define symbol ReadDialog() ``{
     boolean ret = true;
-
-    // don't use RequireAndConflict directly, import require.ycp
-    // conditionally to avoid Pkg:: startup
-    if (!isInstalled ("xinetd") || !isInstalled ("tftp"))
-    {
-	include "require.ycp";
-	ret = ret && InstallAndRemove (
-	    ["xinetd", "tftp"], [],
-	    // notification 1/2
-	    _("<p>To configure the TFTP server, the packages <b>xinetd</b> and <b>tftp</b> must be installed.</p>") +
-	    // notification 2/2
-	    _("<p>Install them now?</p>")
-	    );
-    }
 
     ret = ret && TftpServer::Read();
 
@@ -122,6 +121,7 @@ global define symbol MainDialog () ``{
 	    Label::BackButton(), Label::FinishButton());
 
     any ret = nil;
+	UI::ChangeWidget (`id (`viewlog), `Enabled, !Mode::config);
     repeat
     {
 	UI::ChangeWidget (`id (`directory), `Enabled, start);
