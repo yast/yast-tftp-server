@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Nov 10 14:11:46 CET 2004 - mvidner@suse.cz
+
+- Updated to new Mode.
+- Using Message.
+- 2.11.0
+
+-------------------------------------------------------------------
 Wed Sep 15 15:55:48 CEST 2004 - mvidner@suse.cz
 
 - Use Package instead of Require.

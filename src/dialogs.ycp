@@ -14,6 +14,7 @@ textdomain "tftp-server";
 import "CWMFirewallInterfaces";
 import "Label";
 import "LogView";
+import "Message";
 import "Mode";
 import "Package";
 import "Popup";
@@ -132,7 +133,7 @@ define symbol MainDialog () ``{
     // initialize the widget (set the current value)
     CWMFirewallInterfaces::OpenFirewallInit (fw_cwm_widget, "");
 
-    UI::ChangeWidget (`id (`viewlog), `Enabled, !Mode::config);
+    UI::ChangeWidget (`id (`viewlog), `Enabled, !Mode::config ());
     map event = nil;
     any ret = nil;
     repeat
@@ -179,13 +180,10 @@ define symbol MainDialog () ``{
 	    if (CheckDirectorySyntax (directory))
 	    {
 		//ok, say that it will be created
-		import "Mode";
-		if (!Mode::config && SCR::Read (.target.size, directory) < 0)
+		if (!Mode::config () && SCR::Read (.target.size, directory) < 0)
 		{
 		    // the dir does not exist
-		    // yes-no popup
-		    ret = Popup::YesNo(_("The directory does not exist.
-Create it?")) ? ret : nil;
+		    ret = Popup::YesNo (Message::DirectoryDoesNotExistCreate (directory)) ? ret : nil;
 		}
 	    }
 	    else
