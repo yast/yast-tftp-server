@@ -27,6 +27,5 @@ Summary:	Configuration of TFTP server
 @clientdir@/tftp-server*.ycp
 @moduledir@/TftpServer.*
 @desktopdir@/tftp-server.desktop
-@configdir@/tftp-server.y2cc
 @scrconfdir@/etc_xinetd_d_tftp.scr
 %doc @docdir@

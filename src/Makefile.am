@@ -12,15 +12,12 @@ ynclude_DATA =			\
 	wizards.ycp		\
 	dialogs.ycp
 
-config_DATA =			\
-	tftp-server.y2cc
-
 module_DATA =			\
 	TftpServer.ycp
 
 desktop_DATA =                  \
 	tftp-server.desktop
 
-EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(config_DATA) $(module_DATA) $(desktop_DATA)
+EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(module_DATA) $(desktop_DATA)
 
 include $(top_srcdir)/Makefile.am.common
