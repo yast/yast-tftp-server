@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jan 31 14:10:25 CET 2005 - mvidner@suse.cz
+
+- Adjusted testsuite for changes in firewall (build fix).
+- 2.11.2
+
+-------------------------------------------------------------------
 Mon Jan  3 16:14:53 CET 2005 - mvidner@suse.cz
 
 - Adjusted for firewall's move to yast2.rpm.
