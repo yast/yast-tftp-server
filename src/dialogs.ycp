@@ -14,7 +14,6 @@ textdomain "tftp-server";
 import "TftpServer";
 import "Wizard";
 
-//include "ui/file_popups.ycp";
 import "Popup";
 import "Label";
 import "Require";
