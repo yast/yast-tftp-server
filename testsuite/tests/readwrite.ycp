@@ -9,8 +9,6 @@
     // testedfiles: TftpServer.ycp Service.ycp Testsuite.ycp
 
     include "testsuite.ycp";
-    import "TftpServer";
-
 
     map READ = $[
 	// Runlevel:
@@ -49,6 +47,9 @@
 		    ],
 		],
 	    ],
+	    "target" : $[
+		"size" : 0,
+	    ],
 	];
 
     map WRITE = $[
@@ -67,6 +68,10 @@
 */
 	    ],
 	];
+
+    TESTSUITE_INIT ([READ, WRITE, EXECUTE], nil);
+
+    import "TftpServer";
 
     TEST (``(TftpServer::Read ()), [READ, WRITE, EXECUTE], nil);
     TEST (``(TftpServer::Write ()), [READ, WRITE, EXECUTE], nil);
