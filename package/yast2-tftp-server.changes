@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Aug 27 11:24:16 CEST 2004 - mvidner@suse.cz
+
+- Use LogView to display the log as it grows.
+- 2.10.2
+
+-------------------------------------------------------------------
 Mon Aug 23 16:38:32 CEST 2004 - mvidner@suse.cz
 
 - Added Open Firewall button.
