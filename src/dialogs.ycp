@@ -1,0 +1,242 @@
+/**
+ * File:	include/tftp-server/dialogs.ycp
+ * Package:	Configuration of tftp-server
+ * Summary:	Dialogs definitions
+ * Authors:	Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+
+textdomain "tftp-server";
+
+import "TftpServer";
+import "Wizard";
+
+include "ui/file_popups.ycp";
+include "ui/common_popups.ycp";
+include "ui/common_messages.ycp";
+
+/**
+ * Use rpm -q to query packages
+ * @param pkg eg. "tftp", "xinetd"
+ */
+global define boolean isInstalled (string pkg) ``{
+    return SCR::Execute (.target.bash, "/bin/rpm -q " + pkg) == 0;
+}
+
+/**
+ * Read settings dialog
+ * @return `abort if aborted and `next otherwise
+ */
+global define symbol ReadDialog() ``{
+    boolean ret = true;
+
+    // don't use RequireAndConflict directly, import require.ycp
+    // conditionally to avoid Pkg:: startup
+    if (!isInstalled ("xinetd") || !isInstalled ("tftp"))
+    {
+	include "require.ycp";
+	ret = ret && InstallAndRemove (
+	    ["xinetd", "tftp"], [],
+	    // notification 1/2
+	    _("<p>To configure TFTP server, the packages <b>xinetd</b> and <b>tftp</b> must be installed.</p>") +
+	    // notification 2/2
+	    _("<p>Do you want to install them now?</p>")
+	    );
+    }
+
+    ret = ret && TftpServer::Read();
+
+    if (TftpServer::foreign_servers != "")
+    {
+	UI::ErrorPopup (TftpServer::ForeignServersError ());
+	ret = false;
+    }
+    return ret ? `next : `abort;
+}
+
+/**
+ * Write settings dialog
+ * @return `abort if aborted and `next otherwise
+ */
+global define symbol WriteDialog() ``{
+    boolean ret = TftpServer::Write();
+    return ret ? `next : `abort;
+}
+
+/**
+ * Main dialog
+ * @return dialog result
+ */
+global define symbol MainDialog () ``{
+    Wizard::SetScreenShotName ("tftp-server-1-main");
+
+    boolean start = TftpServer::start;
+    string directory = TftpServer::directory;
+    boolean changed = false;
+
+    /* Tftp-server dialog caption */
+    string caption = _("TFTP Server Configuration");
+
+    // dialog help text
+    string help_text = _("<p>Here, a server for TFTP (Trivial File Transfer Protocol) can be enabled. It will be started using xinetd.</p>");
+    // dialog help text
+    help_text = help_text + _("<p>Specify the directory where served files are located. The usual value is <tt>/tftpboot</tt>. It will be created if it does not exist. The server will use it as its root directory (using the <tt>-s</tt> option).</p>");
+
+    term contents =
+	`HVSquash (
+	`VBox (
+	    `RadioButtonGroup (
+		`id (`rbg),
+		`VBox (
+		    `Left (`RadioButton (
+			       `id (`tftpno), `opt (`notify),
+			       // Radio button label, disable TFTP server
+			       _("&Disable"), !start)),
+		    `Left (`RadioButton (
+			       `id (`tftpyes), `opt (`notify),
+			       // Radio button label, disable TFTP server
+			       _("&Enable"), start))
+		    )
+		),
+	    `VSpacing (1),
+	    TextAndButton (
+		// Text entry label
+		// Directory where served files (usually boot images) reside
+		`TextEntry (`id (`directory), _("&Boot image directory"), directory),
+		// push button label
+		// select a directory from the filesystem
+		`PushButton (`id (`browse), _("Bro&wse"))
+		),
+	    `VSpacing (2),
+	    // push button label
+	    // display a log file
+	    `PushButton (`id (`viewlog), _("&View Log"))
+	    )
+	    );
+
+    Wizard::SetContentsButtons(caption, contents, help_text,
+	    BackButtonLabel(), FinishButtonLabel());
+
+    any ret = nil;
+    repeat
+    {
+	UI::ChangeWidget (`id (`directory), `Enabled, start);
+	UI::ChangeWidget (`id (`browse), `Enabled, start);
+
+	ret = UI::UserInput();
+	if (ret == `cancel)
+	{
+	    ret = `abort;
+	}
+
+	start = (UI::QueryWidget (`id (`rbg), `CurrentButton) == `tftpyes);
+	directory = UI::QueryWidget (`id (`directory), `Value);
+
+	// discard the difference in disabled fields:
+	// directory is only considered if start is on
+	changed =
+	    start != TftpServer::start ||
+	    (start && directory != TftpServer::directory);
+
+	if (ret == `browse)
+	{
+	    directory = PopupDir (directory != ""? directory: "/");
+	    if (directory != "")
+	    {
+		UI::ChangeWidget (`id (`directory), `Value, directory);
+	    }
+	}
+	else if (ret == `viewlog)
+	{
+	    ViewLogPopup ();
+	}
+
+	// validity checks
+	if (ret == `next && start)
+	{
+	    if (CheckDirectorySyntax (directory))
+	    {
+		//ok, say that it will be created
+		import "Mode";
+		if (!Mode::config && SCR::Read (.target.size, directory) < 0)
+		{
+		    // the dir does not exist
+		    // yes-no popup
+		    ret = UI::YesNoPopup(_("The directory does not exist.
+Create it?")) ? ret : nil;
+		}
+	    }
+	    else
+	    {
+		UI::SetFocus (`id (`directory));
+		// error popup
+		UI::ErrorPopup (_("The directory must start with a slash (/)
+and must not contain spaces."));
+		ret = nil;
+	    }
+	}
+    }
+    until (ret == `next ||
+	   ((ret == `back || ret == `abort) &&
+	    (!changed || UI::ReallyAbortPopup (true))));
+
+    if (ret == `next)
+    {
+	TftpServer::start = start;
+	if (start)
+	{
+	    TftpServer::directory = directory;
+	}
+    }
+
+    Wizard::RestoreScreenShotName ();
+    return ret;
+}
+
+/**
+ * Display a log in a popup
+ * greps tftp from /var/log/messages to a temporary file
+ * and uses ShowFilePopup on it
+ */
+global define void ViewLogPopup () ``{
+    string tmpdir = SCR::Read (.target.tmpdir);
+    string tmpfile = tmpdir + "/tftp-log";
+    string command = "/usr/bin/grep -i tftp /var/log/messages";
+    SCR::Execute (.target.bash, command + " > " + tmpfile);
+    // Log View widget caption
+    // %1 is a command like "grep foo file"
+    // snapshot means that the dialog will not display log items
+    // added since the dialog was displayed
+    ShowFilePopup (sformat (_("Output of '%1' (snapshot)"), command), tmpfile);
+    SCR::Execute (.target.remove, tmpfile);
+}
+
+// copied from nfs-client
+/**
+ * Nicely put a `TextEntry and its helper `PushButton together
+ * @param text   textentry widget
+ * @param button pushbutton widget
+ * @return a HBox
+ */
+global define term TextAndButton (term text, term button) ``{
+    return `HBox (
+	`Bottom (text),
+	`HSpacing(0.5),
+	`Bottom (button)
+	);
+}
+
+/**
+ * Must be an absolute path without whitespace.
+ * @param dir directory path
+ * @return valid?
+ */
+global define boolean CheckDirectorySyntax (string dir) ``{
+    return (substring (dir, 0, 1) == "/" && filterchars (" \t", dir) == "");
+}
+
+/* EOF */
+}

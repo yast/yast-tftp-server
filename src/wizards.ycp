@@ -1,0 +1,66 @@
+/**
+ * File:	include/tftp-server/wizards.ycp
+ * Package:	Configuration of tftp-server
+ * Summary:	Wizards definitions
+ * Authors:	Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+
+textdomain "tftp-server";
+
+import "Wizard";
+
+include "ui/common_popups.ycp";
+include "ui/common_messages.ycp";
+include "wizard/sequencer.ycp";
+
+include "tftp-server/dialogs.ycp";
+
+/**
+ * Whole configuration of tftp-server
+ * @return sequence result
+ */
+global define symbol TftpServerSequence() ``{
+
+    map aliases = $[
+	"read"	: [ ``( ReadDialog() ), true ],
+	"main"	:   ``( MainDialog() ),
+	"write"	: [ ``( WriteDialog() ), true ]
+    ];
+
+    map sequence = $[
+	"ws_start" : "read",
+	"read" : $[
+	    `abort	: `abort,
+	    `next	: "main"
+	],
+	"main" : $[
+	    `abort	: `abort,
+	    `next	: "write"
+	],
+	"write" : $[
+	    `abort	: `abort,
+	    `next	: `next
+	]
+    ];
+
+    /* Tftp-server dialog caption */
+    string caption = _("TFTP Server Configuration");
+    term contents = `Label(_("Initializing ..."));
+
+    Wizard::CreateDialog();
+    Wizard::SetContentsButtons(caption, contents, "",
+	    BackButtonLabel(), NextButtonLabel());
+
+    any ret = WizardSequencer(aliases, sequence);
+
+    UI::CloseDialog();
+    return ret;
+}
+
+
+/* EOF */
+}

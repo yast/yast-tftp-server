@@ -1,0 +1,103 @@
+/**
+ * File:
+ *   TftpServer_auto.ycp
+ *
+ * Package:
+ *   Configuration of TFTPSERVER
+ *
+ * Summary:
+ *   Client for autoinstallation
+ *
+ * Authors:
+ *   Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ *
+ * This is a client for autoinstallation. It takes its arguments,
+ * goes through the configuration and return the setting.
+ * Does not do any changes to the configuration.
+ */
+
+/**
+ * @param first a map of TFTPSERVER settings
+ * @return map edited settings or an empty map if canceled
+ * @example map mm = $[ "FAIL_DELAY" : "77" ];
+ * @example map ret = WFM::CallModule ("tftp-server_auto", [ mm ]);
+ */
+
+{
+    textdomain "tftp-server";
+
+    import "TftpServer";
+    import "Wizard";
+    include "tftp-server/dialogs.ycp";
+    include "wizard/sequencer.ycp";
+    list args = WFM::Args ();
+    if ( size (args) <= 0 )
+    {
+	y2error ("Did not get the settings, probably some mistake...");
+	return false;
+    }
+    if ( !is ( WFM::Args (0), map ) )
+    {
+	y2error ("Bad argument for tftp-server_auto: %1", WFM::Args (0));
+	return false;
+    }
+    map settings = $[];
+    {
+	integer i = 0;
+	while (i < size (WFM::Args()))
+	{
+	    if (is (WFM::Args (i), map) && nil != WFM::Args (i))	settings = WFM::Args (i);
+	    i = i + 1;
+	}
+    }
+
+    TftpServer::Import ( settings );
+    y2milestone("Imported: (%1)", settings);
+
+    define set_contents()
+	``{
+	term contents =
+	    `VBox(
+		  `VSpacing(1),
+		  `RichText( `id(`summary), TftpServer::Summary()),
+		  `VSpacing(),
+		  `HBox(
+		      // button label
+			`PushButton(`id(`configure), _("&Configure TFTP server")),
+			`HStretch(),
+		      // button label
+			`PushButton(`id(`reset), _("&Reset Configuration"))
+			),
+		  `VSpacing()
+		  );
+	// dialog heading
+	Wizard::SetContents(_("TFTP Server Configuration"),
+			    contents, "", true, true);
+    }
+    set_contents();
+    any result = nil;
+    any ret = nil;
+    repeat {
+	ret = UI::UserInput();
+	if (ret == `configure)
+	{
+	    result = MainDialog ();
+	    if (result == `next || result == `finish)
+	    {
+		settings = TftpServer::Export ();
+	    }
+	    TftpServer::Set(settings);
+	    set_contents();
+	}
+	else if ( ret == `reset)
+	{
+	    settings= $[];
+	    TftpServer::Set(settings);
+	    set_contents();
+	}
+    } until (ret == `back || ret == `next || ret ==`key || ret ==`abort);
+
+    return [ret, settings];
+}

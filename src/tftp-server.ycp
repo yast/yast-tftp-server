@@ -1,0 +1,39 @@
+/**
+ * File:	clients/tftp-server.ycp
+ * Package:	Configuration of tftp-server
+ * Summary:	Main file
+ * Authors:	Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ *
+ * Main file for tftp-server configuration. Uses all other files.
+ */
+
+{
+
+/***
+ * <h3>Configuration of the tftp-server</h3>
+ */
+
+textdomain "tftp-server";
+
+/* The main () */
+y2milestone ("----------------------------------------");
+y2milestone ("Tftp-server module started");
+
+include "tftp-server/wizards.ycp";
+
+/* main ui function */
+any ret = nil;
+
+ret = TftpServerSequence();
+y2debug("ret=%1", ret);
+
+/* Finish */
+y2milestone("Tftp-server module finished");
+y2milestone("----------------------------------------");
+
+return ret;
+
+/* EOF */
+}

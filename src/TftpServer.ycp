@@ -1,0 +1,274 @@
+/**
+ * File:	modules/TftpServer.ycp
+ * Package:	Configuration of TftpServer
+ * Summary:	Data for configuration of TftpServer, input and output functions.
+ * Authors:	Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ *
+ * Representation of the configuration of TftpServer.
+ * Input and output routines.
+ */
+
+{
+
+module "TftpServer";
+textdomain "tftp-server";
+
+import "Runlevel";
+import "Report";
+import "Summary";
+
+/**
+ * Start tftpd via xinetd?
+ */
+global boolean start = false;
+
+/**
+ * Image directory, last argument of in.tftpd
+ */
+global string directory = "";
+
+/**
+ * Other arguments to in.tftpd, ie. not including -s or /dir
+ */
+global string other_args = "";
+
+
+/**
+ * Detect who is serving tftp:
+ * Inetd may be running, it is the default. But it is ok unless it is
+ * serving tftp. So we detect who is serving tftp and warn if it is
+ * not xinetd or in.tftpd.
+ * If nonempty, the user is notified and the module gives up.
+ */
+global string foreign_servers = "";
+
+/**
+ * Extract the directory and other arguments.
+ * global to make testing easier
+ * @param server_args server_args from xinetd.conf
+ */
+global define void ParseServerArgs (string server_args) ``{
+    // extract the last argument and kick "-s".
+    list(string) server_args_l = filter (string s,
+					 splitstring (server_args, " \t"),
+					 ``( s != ""));
+    integer sz = size (server_args_l);
+    integer i = 0;
+    list(string) other_args_l = filter (string s, server_args_l, ``{
+	i = i + 1;
+	return s != "-s" && i != sz;
+    });
+    directory = server_args_l[sz - 1]:"";
+    other_args = mergestring (other_args_l, " ");
+}
+
+/**
+ * Read all tftp-server settings
+ * @return true on success
+ */
+global define boolean Read () ``{
+    // foreign_servers:
+    // get command names via lsof, filter out xinetd and in.tftpd
+    map out = SCR::Execute (.target.bash_output, "/usr/bin/lsof -i :tftp -Fc");
+    list(string) lines = splitstring (out["stdout"]:"", "\n");
+    // the command is field 'c'
+    lines = filter (string l, lines, ``( substring (l, 0, 1) == "c" ));
+    // strip the c
+    lines = maplist (string l, lines, ``( substring (l, 1, size (l) - 1) ));
+    // filter out our servers
+    lines = filter (string l, lines, ``( l != "xinetd" && l != "in.tftpd" ));
+    foreign_servers = mergestring (lines, ", ");
+
+    boolean xinetd_start = Runlevel::ServiceEnabled ("xinetd");
+
+    // is the config file there at all?
+    list(string) sections = SCR::Dir (.etc.xinetd_d.tftp.section);
+    string disable = SCR::Read (.etc.xinetd_d.tftp.value.tftp.disable);
+    start = xinetd_start && sections != [] && disable != "yes";
+
+    string server_args = SCR::Read (.etc.xinetd_d.tftp.value.tftp.server_args);
+    if (server_args == nil)
+    {
+	// default
+//	server_args = "-s /tftpboot";
+	server_args = "";
+    }
+
+    ParseServerArgs (server_args);
+
+    return true;
+}
+
+/**
+ * Return error string to be used in WriteOnly (for autoinst)
+ * or before the edit dialog.
+ */
+global define string ForeignServersError () ``{
+    // error popup
+    // %1 is a command name (or a comma (, ) separated list of them)
+    return sformat (_("To set up TFTP, this module can only use xinetd.
+However, other program is serving TFTP: %1.
+Exiting."), foreign_servers);
+}
+
+/**
+ * Write all tftp-server settings
+ * without actually (re)starting the service
+ * @return true on success
+ */
+global define boolean WriteOnly () ``{
+    y2milestone ("Writing");
+
+    // give up if tftp is served by someone else
+    if (foreign_servers != "")
+    {
+	Report::Error (ForeignServersError ());
+	return false;
+    }
+
+    // write the config file
+    //
+    //  create it if it does not exist
+    //  could be a normal situation at initial setup
+    //  or a broken setup, ok if we fix it when writing
+    //  but that means messing up with other parameters
+    //  lets touch just the basics
+    //  the first "item" is the brace following the section start
+    SCR::Write (.etc.xinetd_d.tftp.value.tftp."{", "");
+    SCR::Write (.etc.xinetd_d.tftp.value_type.tftp."{", 1);
+    SCR::Write (.etc.xinetd_d.tftp.value.tftp.disable, (start? "no": "yes"));
+    if (start)
+    {
+	SCR::Write (.etc.xinetd_d.tftp.value.tftp.socket_type, "dgram");
+	SCR::Write (.etc.xinetd_d.tftp.value.tftp.protocol, "udp");
+	SCR::Write (.etc.xinetd_d.tftp.value.tftp.wait, "yes");
+	SCR::Write (.etc.xinetd_d.tftp.value.tftp.user, "root");
+	SCR::Write (.etc.xinetd_d.tftp.value.tftp.server, "/usr/sbin/in.tftpd");
+	string server_args = sformat ("%1 -s %2", other_args, directory);
+	SCR::Write (.etc.xinetd_d.tftp.value.tftp.server_args, server_args);
+    }
+
+    // flush
+    SCR::Write (.etc.xinetd_d.tftp, nil);
+
+    // image dir: if does not exist, create with root:root rwxr-xr-x
+    SCR::Execute (.target.mkdir, directory);
+
+    // firewall??
+
+    // enable and (re)start xinetd
+    if (start)
+    {
+	Runlevel::ServiceAdjust ("xinetd", "enable");
+    }
+    else
+    {
+	// xinetd may be needed for other services so we never turn it
+	// off.
+    }
+
+    return true;
+}
+
+/**
+ * Write all tftp-server settings
+ * @return true on success
+ */
+global define boolean Write () ``{
+    // write the config file
+    // image dir: if does not exist, create with root:root rwxr-xr-x
+    // firewall??
+    // enable and (re)start xinetd
+
+    if (!WriteOnly ())
+    {
+	return false;
+    }
+
+    // enable and (re)start xinetd
+
+    // in.tftpd will linger around for 15 minutes waiting for a new connection
+    // so we must kill it otherwise it will be using the old parameters
+    SCR::Execute (.target.bash, "/usr/bin/killall in.tftpd");
+
+    if (start)
+    {
+	Runlevel::RunInitScript ("xinetd", "restart");
+    }
+    else
+    {
+	// xinetd may be needed for other services so we never turn it
+	// off. It will exit anyway if no services are configured.
+	// If it is running, restart it.
+	Runlevel::RunInitScript ("xinetd", "try-restart");
+    }
+
+    return true;
+}
+
+/**
+ * Set module data, without validity checking
+ * @param settings may be empty for reset
+ * @return void
+ */
+global define void Set (map settings) ``{
+    start = settings["start_tftpd"]:false;
+    directory = settings["tftp_directory"]:"";
+    other_args = "";
+}
+
+
+global define boolean Import (map settings) ``{
+    if (settings != $[])
+    {
+	string s = "start_tftpd";
+	string d = "tftp_directory";
+	if (!haskey (settings, s))
+	{
+	    y2error ("Missing at Import: '%1'.", s);
+	    return false;
+	}
+	if (settings[s]:false && !haskey (settings, d))
+	{
+	    y2error ("Missing at Import: '%1'.", d);
+	    return false;
+	}
+    }
+    Set (settings);
+    return true;
+}
+
+global define map Export () ``{
+    map settings = $[
+	"start_tftpd": start,
+	];
+    if (start)
+    {
+	settings["tftp_directory"]= directory;
+    }
+    return settings;
+}
+
+/**
+ * @return Html formatted configuration summary
+ */
+global define string Summary () ``{
+    string summary = "";
+    string nc = Summary::NotConfigured ();
+
+    // summary header
+    summary = Summary::AddHeader(summary, _("TFTP server enabled"));
+    // summary item: an option is turned on
+    summary = Summary::AddLine(summary, (start) ? _("Yes") : nc);
+
+    // summary header
+    summary = Summary::AddHeader(summary, _("Boot image directory"));
+    summary = Summary::AddLine(summary, (directory != "") ? directory : nc);
+
+    return summary;
+}
+
+/* EOF */
+}

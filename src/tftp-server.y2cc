@@ -1,0 +1,44 @@
+;
+; Menuentry file for tftp-server used by YaST2 Control Center
+;
+; $Id$
+;
+
+[Y2Module tftp-server]
+
+; name of the entry, shown in y2cc
+Name = _("TFTP Server")
+
+; "raw" group name to which this module belongs
+; see /usr/share/YaST2/config/y2cc.groups for valid values
+Group = Net_advanced
+
+; icon displayed in y2cc
+;Icon = tftp-server.png
+Icon = boot.png
+
+; *one* *short* descriptive line for y2cc
+Helptext = _("Configure TFTP Server")
+
+; arguments, seperated by space
+Arguments = 
+
+; whether root privileges are required to run this module
+RequiresRoot = true
+
+; default size for window, Y2CC will set $Y2_GEOMETRY to this value
+Geometry = 
+
+; string to use for sorting instead of Name
+SortKey = 
+
+; which textdomain to use for translations (important!)
+Textdomain = tftp-server 
+
+; use this module in yast2-config-autoinst (write|configure|all)
+; write: can only write (during auto-installation)
+; configure: no write features available
+; all: configure and write features implemented
+Autoinst = all
+
+; vim:syntax=dosini
