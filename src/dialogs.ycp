@@ -21,6 +21,7 @@ import "Label";
 /**
  * Use rpm -q to query packages
  * @param pkg eg. "tftp", "xinetd"
+ * @return boolean true if is installed
  */
 global define boolean isInstalled (string pkg) ``{
     return SCR::Execute (.target.bash, "/bin/rpm -q " + pkg) == 0;

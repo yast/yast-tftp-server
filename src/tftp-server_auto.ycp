@@ -26,78 +26,71 @@
  */
 
 {
-    textdomain "tftp-server";
+textdomain "tftp-server";
 
-    import "TftpServer";
-    import "Wizard";
-    include "tftp-server/dialogs.ycp";
-    include "wizard/sequencer.ycp";
-    list args = WFM::Args ();
-    if ( size (args) <= 0 )
-    {
-	y2error ("Did not get the settings, probably some mistake...");
-	return false;
-    }
-    if ( !is ( WFM::Args (0), map ) )
-    {
-	y2error ("Bad argument for tftp-server_auto: %1", WFM::Args (0));
-	return false;
-    }
-    map settings = $[];
-    {
-	integer i = 0;
-	while (i < size (WFM::Args()))
-	{
-	    if (is (WFM::Args (i), map) && nil != WFM::Args (i))	settings = WFM::Args (i);
-	    i = i + 1;
-	}
-    }
+y2milestone("----------------------------------------");
+y2milestone("TftpServer auto started");
 
-    TftpServer::Import ( settings );
-    y2milestone("Imported: (%1)", settings);
+import "TftpServer";
+include "tftp-server/wizards.ycp";
 
-    define set_contents()
-	``{
-	term contents =
-	    `VBox(
-		  `VSpacing(1),
-		  `RichText( `id(`summary), TftpServer::Summary()),
-		  `VSpacing(),
-		  `HBox(
-		      // button label
-			`PushButton(`id(`configure), _("&Configure TFTP Server")),
-			`HStretch(),
-		      // button label
-			`PushButton(`id(`reset), _("&Reset Configuration"))
-			),
-		  `VSpacing()
-		  );
-	// dialog heading
-	Wizard::SetContents(_("TFTP Server Configuration"),
-			    contents, "", true, true);
-    }
-    set_contents();
-    any result = nil;
-    any ret = nil;
-    repeat {
-	ret = UI::UserInput();
-	if (ret == `configure)
-	{
-	    result = MainDialog ();
-	    if (result == `next || result == `finish)
-	    {
-		settings = TftpServer::Export ();
-	    }
-	    TftpServer::Set(settings);
-	    set_contents();
-	}
-	else if ( ret == `reset)
-	{
-	    settings= $[];
-	    TftpServer::Set(settings);
-	    set_contents();
-	}
-    } until (ret == `back || ret == `next || ret ==`key || ret ==`abort);
+any ret = nil;
+string func = "";
+map param = $[];
 
-    return [ret, settings];
+/* Check arguments */
+if(size(Args()) > 0 && is(Args(0), string)) {
+    func = WFM::Args(0);
+    if(size(Args()) > 1 && is(Args(1), map))
+        param = WFM::Args(1);
+}
+y2debug("func=%1", func);
+y2debug("param=%1", param);
+
+/* Create a summary*/
+if(func == "Summary") {
+    ret = select(TftpServer::Summary(), 0, "");
+}
+/* Reset configuration */
+else if (func == "Reset") {
+    TftpServer::Import($[]);
+    ret = $[];
+}
+/* Change configuration (run AutoSequence) */
+else if (func == "Change") {
+    ret = TftpServerSequence();
+}
+/* Import configuration */
+else if (func == "Import") {
+    ret = TftpServer::Import(param);
+}
+/* Return actual state */
+else if (func == "Export") {
+    ret = TftpServer::Export();
+}
+/* Read current state */
+else if (func == "Read") {
+    import "Progress";
+    Progress::off();
+    ret = TftpServer::Read();
+    Progress::on();
+}
+/* Write givven settings */
+else if (func == "Write") {
+    import "Progress";
+    Progress::off();
+    TftpServer::write_only = true;
+    ret = TftpServer::Write();
+    Progress::on();
+}
+/* Unknown function */
+else {
+    y2error("Unknown function: %1", func);
+    ret = false;
+}
+
+y2debug("ret=%1", ret);
+y2milestone("TftpServer auto finished");
+y2milestone("----------------------------------------");
+
 }

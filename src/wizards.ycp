@@ -49,6 +49,8 @@ global define symbol TftpServerSequence() ``{
 
     /* Tftp-server dialog caption */
     string caption = _("TFTP Server Configuration");
+
+    // progress label
     term contents = `Label(_("Initializing ..."));
 
     Wizard::CreateDialog();

@@ -104,6 +104,7 @@ global define boolean Read () ``{
 /**
  * Return error string to be used in WriteOnly (for autoinst)
  * or before the edit dialog.
+ * @return error string
  */
 global define string ForeignServersError () ``{
     // error popup
@@ -221,6 +222,12 @@ global define void Set (map settings) ``{
 }
 
 
+/**
+ * Get all tftp-server settings from the first parameter
+ * (For use by autoinstallation.)
+ * @param settings The YCP structure to be imported.
+ * @return boolean True on success
+ */
 global define boolean Import (map settings) ``{
     if (settings != $[])
     {
@@ -241,6 +248,11 @@ global define boolean Import (map settings) ``{
     return true;
 }
 
+/**
+ * Dump the tftp-server settings to a single map
+ * (For use by autoinstallation.)
+ * @return map Dumped settings (later acceptable by Import ())
+ */
 global define map Export () ``{
     map settings = $[
 	"start_tftpd": start,
