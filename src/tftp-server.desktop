@@ -20,4 +20,4 @@ Icon=boot
 Exec=/sbin/yast2 tftp-server 
 
 Name=TFTP Server
-GenericName=Configure TFTP Server
+GenericName=Configure TFTP server
