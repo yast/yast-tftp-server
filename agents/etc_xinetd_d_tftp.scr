@@ -1,6 +1,6 @@
 .etc.xinetd_d.tftp
 `ag_ini (
-    IniAgent (
+    `IniAgent (
 	"/etc/xinetd.d/tftp",
 	$[
 	    "options": ["no_nested_sections"],
