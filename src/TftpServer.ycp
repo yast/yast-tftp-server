@@ -108,9 +108,10 @@ global define boolean Read () ``{
 global define string ForeignServersError () ``{
     // error popup
     // %1 is a command name (or a comma (, ) separated list of them)
-    return sformat (_("To set up TFTP, this module can only use xinetd.
-However, other program is serving TFTP: %1.
-Exiting."), foreign_servers);
+    return sformat (_("This module can only use xinetd to set up TFTP.
+However, another program is serving TFTP: %1.
+Exiting.
+"), foreign_servers);
 }
 
 /**
@@ -259,12 +260,12 @@ global define string Summary () ``{
     string nc = Summary::NotConfigured ();
 
     // summary header
-    summary = Summary::AddHeader(summary, _("TFTP server enabled"));
+    summary = Summary::AddHeader(summary, _("TFTP Server Enabled"));
     // summary item: an option is turned on
     summary = Summary::AddLine(summary, (start) ? _("Yes") : nc);
 
     // summary header
-    summary = Summary::AddHeader(summary, _("Boot image directory"));
+    summary = Summary::AddHeader(summary, _("Boot Image Directory"));
     summary = Summary::AddLine(summary, (directory != "") ? directory : nc);
 
     return summary;

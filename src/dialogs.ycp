@@ -41,9 +41,9 @@ global define symbol ReadDialog() ``{
 	ret = ret && InstallAndRemove (
 	    ["xinetd", "tftp"], [],
 	    // notification 1/2
-	    _("<p>To configure TFTP server, the packages <b>xinetd</b> and <b>tftp</b> must be installed.</p>") +
+	    _("<p>To configure the TFTP server, the packages <b>xinetd</b> and <b>tftp</b> must be installed.</p>") +
 	    // notification 2/2
-	    _("<p>Do you want to install them now?</p>")
+	    _("<p>Install them now?</p>")
 	    );
     }
 
@@ -105,7 +105,7 @@ global define symbol MainDialog () ``{
 	    TextAndButton (
 		// Text entry label
 		// Directory where served files (usually boot images) reside
-		`TextEntry (`id (`directory), _("&Boot image directory"), directory),
+		`TextEntry (`id (`directory), _("&Boot Image Directory"), directory),
 		// push button label
 		// select a directory from the filesystem
 		`PushButton (`id (`browse), _("Bro&wse"))

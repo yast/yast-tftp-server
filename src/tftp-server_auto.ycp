@@ -65,7 +65,7 @@
 		  `VSpacing(),
 		  `HBox(
 		      // button label
-			`PushButton(`id(`configure), _("&Configure TFTP server")),
+			`PushButton(`id(`configure), _("&Configure TFTP Server")),
 			`HStretch(),
 		      // button label
 			`PushButton(`id(`reset), _("&Reset Configuration"))
