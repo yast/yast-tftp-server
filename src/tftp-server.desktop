@@ -16,7 +16,7 @@ X-SuSE-YaST-Geometry=
 X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=tftp-server
 
-Icon=boot
+Icon=yast-tftp-server
 Exec=/sbin/yast2 tftp-server 
 
 Name=TFTP Server
