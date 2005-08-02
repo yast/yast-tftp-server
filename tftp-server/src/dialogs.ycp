@@ -1,0 +1,244 @@
+/**
+ * File:	include/tftp-server/dialogs.ycp
+ * Package:	Configuration of tftp-server
+ * Summary:	Dialogs definitions
+ * Authors:	Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ */
+
+{
+
+textdomain "tftp-server";
+
+import "CWMFirewallInterfaces";
+import "Label";
+import "LogView";
+import "Message";
+import "Mode";
+import "Package";
+import "Popup";
+import "TftpServer";
+import "Wizard";
+
+define term TextAndButton (term text, term button);
+define boolean CheckDirectorySyntax (string dir);
+
+
+/**
+ * Check for required packaged to be installed
+ * @return `abort if aborted and `next otherwise
+ */
+
+define symbol Packages() ``{
+
+    if (!Package::InstallAll (TftpServer::required_packages))
+    {
+	return `abort;
+    }
+
+   return `next;
+}
+
+/**
+ * Read settings dialog
+ * @return `abort if aborted and `next otherwise
+ */
+define symbol ReadDialog() ``{
+    boolean ret = true;
+
+    ret = ret && TftpServer::Read();
+
+    if (TftpServer::foreign_servers != "")
+    {
+	Popup::Error (TftpServer::ForeignServersError ());
+	ret = false;
+    }
+    return ret ? `next : `abort;
+}
+
+/**
+ * Write settings dialog
+ * @return `abort if aborted and `next otherwise
+ */
+define symbol WriteDialog() ``{
+    boolean ret = TftpServer::Write();
+    return ret ? `next : `abort;
+}
+
+/**
+ * Main dialog
+ * @return dialog result
+ */
+define symbol MainDialog () ``{
+    Wizard::SetScreenShotName ("tftp-server-1-main");
+
+    boolean start = TftpServer::start;
+    string directory = TftpServer::directory;
+    boolean changed = false;
+
+    /* Tftp-server dialog caption */
+    string caption = _("TFTP Server Configuration");
+
+    // firewall widget using CWM
+    map<string, any> fw_settings = $[
+	"services": [ "tftp" ],
+	"display_details": true,
+	];
+    map<string,any> fw_cwm_widget = CWMFirewallInterfaces::CreateOpenFirewallWidget (fw_settings);
+
+    // dialog help text
+    string help_text = _("<p>Here, a server for TFTP (Trivial File Transfer Protocol) can be enabled. It will be started using xinetd.</p>");
+    help_text = help_text + fw_cwm_widget["help"]:"";
+    // dialog help text
+    help_text = help_text + _("<p>Specify the directory where served files are located. The usual value is <tt>/tftpboot</tt>. It will be created if it does not exist. The server will use it as its root directory (using the <tt>-s</tt> option).</p>");
+
+    term contents =
+	`HVSquash (
+	`VBox (
+	    `RadioButtonGroup (
+		`id (`rbg),
+		`VBox (
+		    `Left (`RadioButton (
+			       `id (`tftpno), `opt (`notify),
+			       // Radio button label, disable TFTP server
+			       _("&Disable"), !start)),
+		    `Left (`RadioButton (
+			       `id (`tftpyes), `opt (`notify),
+			       // Radio button label, disable TFTP server
+			       _("&Enable"), start))
+		    )
+		),
+	    `VSpacing (1),
+	    fw_cwm_widget["custom_widget"]:`Empty (),
+	    `VSpacing (1),
+	    TextAndButton (
+		// Text entry label
+		// Directory where served files (usually boot images) reside
+		`TextEntry (`id (`directory), _("&Boot Image Directory"), directory),
+		// push button label
+		// select a directory from the filesystem
+		`PushButton (`id (`browse), _("Bro&wse"))
+		),
+	    `VSpacing (2),
+	    // push button label
+	    // display a log file
+	    `PushButton (`id (`viewlog), _("&View Log"))
+	    )
+	    );
+
+    Wizard::SetContentsButtons(caption, contents, help_text,
+	    Label::BackButton(), Label::FinishButton());
+
+    // initialize the widget (set the current value)
+    CWMFirewallInterfaces::OpenFirewallInit (fw_cwm_widget, "");
+
+    UI::ChangeWidget (`id (`viewlog), `Enabled, !Mode::config ());
+    map event = nil;
+    any ret = nil;
+    repeat
+    {
+	UI::ChangeWidget (`id (`directory), `Enabled, start);
+	UI::ChangeWidget (`id (`browse), `Enabled, start);
+
+	event = UI::WaitForEvent ();
+	ret = event["ID"]:nil;
+	if (ret == `cancel)
+	{
+	    ret = `abort;
+	}
+
+	// handle the events, enable/disable the button, show the popup if button clicked
+	CWMFirewallInterfaces::OpenFirewallHandle (fw_cwm_widget, "", event);
+
+	start = (UI::QueryWidget (`id (`rbg), `CurrentButton) == `tftpyes);
+	directory = (string) UI::QueryWidget (`id (`directory), `Value);
+
+	// discard the difference in disabled fields:
+	// directory is only considered if start is on
+	changed =
+	    true ||		// TODO: fw changed, #44106
+	    start != TftpServer::start ||
+	    (start && directory != TftpServer::directory);
+
+	if (ret == `browse)
+	{
+	    directory = UI::AskForExistingDirectory(directory != ""? directory: "/", "");
+	    if (directory != nil)
+	    {
+		UI::ChangeWidget (`id (`directory), `Value, directory);
+	    }
+	}
+	else if (ret == `viewlog)
+	{
+	    LogView::DisplayFiltered ("/var/log/messages", "\\(tftp\\|TFTP\\)");
+	}
+
+	// validity checks
+	if (ret == `next && start)
+	{
+	    if (CheckDirectorySyntax (directory))
+	    {
+		//ok, say that it will be created
+		if (!Mode::config () && SCR::Read (.target.size, directory) < 0)
+		{
+		    // the dir does not exist
+		    ret = Popup::YesNo (Message::DirectoryDoesNotExistCreate (directory)) ? ret : nil;
+		}
+	    }
+	    else
+	    {
+		UI::SetFocus (`id (`directory));
+		// error popup
+		Popup::Error (_("The directory must start with a slash (/)
+and must not contain spaces."));
+		ret = nil;
+	    }
+	}
+    }
+    until (ret == `next ||
+	   ((ret == `back || ret == `abort) &&
+	    (!changed || Popup::ReallyAbort (true))));
+
+    if (ret == `next)
+    {
+	// grab current settings, store them to SuSEFirewall::
+	CWMFirewallInterfaces::OpenFirewallStore (fw_cwm_widget, "", event);
+
+	TftpServer::start = start;
+	if (start)
+	{
+	    TftpServer::directory = directory;
+	}
+    }
+
+    Wizard::RestoreScreenShotName ();
+    return (symbol) ret;
+}
+
+// copied from nfs-client
+/**
+ * Nicely put a `TextEntry and its helper `PushButton together
+ * @param text   textentry widget
+ * @param button pushbutton widget
+ * @return a HBox
+ */
+define term TextAndButton (term text, term button) ``{
+    return `HBox (
+	`Bottom (text),
+	`HSpacing(0.5),
+	`Bottom (button)
+	);
+}
+
+/**
+ * Must be an absolute path without whitespace.
+ * @param dir directory path
+ * @return valid?
+ */
+define boolean CheckDirectorySyntax (string dir) ``{
+    return (substring (dir, 0, 1) == "/" && filterchars (" \t", dir) == "");
+}
+
+/* EOF */
+}

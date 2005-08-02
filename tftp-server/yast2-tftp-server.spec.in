@@ -1,0 +1,31 @@
+@HEADER-COMMENT@
+# neededforbuild  yast2-devel-packages
+
+@HEADER@
+Requires:	yast2 >= 2.11.11
+Requires:	lsof
+
+BuildArchitectures:	noarch
+
+Summary:	Configuration of TFTP server
+
+%description
+-
+
+@PREP@
+
+@BUILD@
+
+@INSTALL@
+
+@CLEAN@
+
+%files
+%defattr(-,root,root)
+%dir @yncludedir@/tftp-server
+@yncludedir@/tftp-server/*
+@clientdir@/tftp-server*.ycp
+@moduledir@/TftpServer.*
+@desktopdir@/tftp-server.desktop
+@scrconfdir@/etc_xinetd_d_tftp.scr
+%doc @docdir@

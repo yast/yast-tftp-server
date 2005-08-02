@@ -1,0 +1,34 @@
+.etc.xinetd_d.tftp
+`ag_ini (
+    `IniAgent (
+	"/etc/xinetd.d/tftp",
+	$[
+	    "options": ["no_nested_sections"],
+	    // copied from SysConfigFile
+	    "comments": [ "^[ \t]*#.*$", "#.*", "^[ \t]*$", ],
+	    "sections": [
+		$[
+		    // header
+		    "begin": ["^[ \t]*service[ \t]+(tftp)[ \t]*$",
+			      "service %s"],
+		    // closing brace
+		    "end":   ["^[ \t]*\\}[ \t]*$",
+			      "}"],
+		],
+	    ],
+	    "params": [
+		// normal parameters
+		// this is the default value type
+		$[
+		    "match": ["^[ \t]*([^ \t]*)[ \t]*=[ \t]*(.*[^ \t]|)[ \t]*$",
+			      "\t%-15s = %s"],
+		],
+		// opening brace
+		$[
+		    "match": ["^[ \t]*(\\{)([ \t]*)$",
+			      "{"],
+		],
+	    ],
+	]
+    )
+)

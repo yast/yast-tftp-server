@@ -1,0 +1,80 @@
+/**
+ * Module:  TFTP server configuration
+ * Summary: Testsuite
+ * Authors: Martin Vidner <mvidner@suse.cz>
+ *
+ * $Id$
+ */
+{
+    // testedfiles: TftpServer.ycp Service.ycp Testsuite.ycp
+
+    include "testsuite.ycp";
+
+    map READ = $[
+	// Runlevel:
+	"init": $[
+	    "scripts": $[
+		"exists": true,
+		"runlevel": $[
+		    "inetd": $[
+			"start": [],
+			"stop":	 [],
+			],
+		    "xinetd": $[
+			"start": [ "3", "5"],
+			"stop":	 [ "3", "5"],
+			],
+		    ],
+		// their contents is not important for ServiceAdjust
+		"comment": $[
+		    "inetd": $[],
+		    "xinetd": $[],
+		    ],
+		],
+	    ],
+	"etc": $[
+	    "xinetd_d": $[
+		"tftp": $[
+		    "section": $[
+			"tftp": $[],
+			],
+		    "value": $[
+			"tftp": $[
+			    "disable": nil,
+			    "server_args": "-s -v /srv/boot"
+			    ],
+			],
+		    ],
+		],
+	    ],
+	    "target" : $[
+		"size" : 0,
+	    ],
+	];
+
+    map WRITE = $[
+	];
+
+    map EXECUTE = $[
+	"target": $[
+	    // ok if used both for `lsof` and `rcfoo start`
+	    "bash_output": $[
+		"exit":0,
+		"stderr":"",
+		"stdout":"p3316\ncxinetd\n"
+		],
+/*
+	    "remove": true, // /etc/yp.conf.sv
+*/
+	    ],
+	];
+
+    TESTSUITE_INIT ([READ, WRITE, EXECUTE], nil);
+
+    import "TftpServer";
+
+    TEST (``(TftpServer::Read ()), [READ, WRITE, EXECUTE], nil);
+    TEST (``(TftpServer::Write ()), [READ, WRITE, EXECUTE], nil);
+
+    //READ["etc","xinetd_d","tftp","value","tftp","server_args"] = ...
+}
