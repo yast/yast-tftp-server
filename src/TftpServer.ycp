@@ -308,12 +308,12 @@ global define string Summary () ``{
     string nc = Summary::NotConfigured ();
 
     // summary header
-    summary = Summary::AddHeader(summary, _("TFTP Server Enabled"));
+    summary = Summary::AddHeader(summary, _("TFTP Server Enabled:"));
     // summary item: an option is turned on
     summary = Summary::AddLine(summary, (start) ? _("Yes") : nc);
 
     // summary header
-    summary = Summary::AddHeader(summary, _("Boot Image Directory"));
+    summary = Summary::AddHeader(summary, _("Boot Image Directory:"));
     summary = Summary::AddLine(summary, (directory != "") ? directory : nc);
 
     return summary;

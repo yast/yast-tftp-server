@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug  9 13:24:26 CEST 2005 - mvidner@suse.cz
+
+- Texts proofread.
+- TFTP is not FTP (#102946).
+- 2.12.1
+
+-------------------------------------------------------------------
 Tue Aug  2 11:03:00 CEST 2005 - locilka@suse.cz
 
 - Adjusted for SUSE Linux 10.0
