@@ -88,8 +88,9 @@ define symbol MainDialog () ``{
     map<string,any> fw_cwm_widget = CWMFirewallInterfaces::CreateOpenFirewallWidget (fw_settings);
 
     // dialog help text
-    string help_text = _("<p><big><b>Configuring a TFTP Server</b></big></p>
-<p>Use this to enable a server for TFTP (trivial file transfer protocol). The server will be started using xinetd.</p>");
+    string help_text = _("<p><big><b>Configuring a TFTP Server</b></big></p>");
+    // dialog help text
+    help_text = help_text + _("<p>Use this to enable a server for TFTP (trivial file transfer protocol). The server will be started using xinetd.</p>");
     // enlighten newbies, #102946
     // dialog help text
     help_text = help_text + _("<p>Note that TFTP and FTP are not the same.</p>");
