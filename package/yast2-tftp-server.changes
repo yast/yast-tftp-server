@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Nov 29 15:49:11 CET 2005 - mzugec@suse.cz
+
+- feature #100125 - command line support 
+
+-------------------------------------------------------------------
 Fri Aug 12 16:01:16 CEST 2005 - mvidner@suse.cz
 
 - Normalized help text (check_ycp).
