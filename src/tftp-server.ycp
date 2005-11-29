@@ -25,9 +25,88 @@ include "tftp-server/wizards.ycp";
 
 import "CommandLine";
 
+// handler function for "status" command
+define boolean handlerStatus(map<string, string> options) ``{
+    string command = CommandLine::UniqueOption( options, ["enable", "disable", "show" ] );
+	switch(command){
+	case "show":
+				// command line: show status of tftp-server
+	   CommandLine::Print(sformat(_("Service status : %1"), TftpServer::start));
+	   break;
+	case "enable":
+	   TftpServer::start=true;
+	   y2milestone("Enable tftp-server");
+	   break;
+	case "disable":
+	   TftpServer::start=false;
+	   y2milestone("Disable tftp-server");
+	   break;
+	};
+ return true;
+};
+
+// handler function for "directory" command
+define boolean handlerDirectory(map<string, string> options) ``{
+    string command = CommandLine::UniqueOption( options, ["path", "list" ] );
+        switch(command){
+        case "list":
+				// command line: show directory server by tftp-server
+           CommandLine::Print(sformat(_("Directory path : %1"), TftpServer::directory));
+           break;
+        case "path":
+	   TftpServer::directory=options["path"]:"";
+	   y2milestone("Set directory path to %1", TftpServer::directory);
+           break;
+        };
+ return true;
+};
+
+// description map for command line
 map cmdline_description = $[
     "id"        : "tftp-server",
     "guihandler"        : TftpServerSequence,
+    "initialize"	: TftpServer::Read,
+    "finish"		: TftpServer::Write,
+    "help"		: _("Configure tftp server"),
+    "actions"		: $[
+	"status" : $[
+		//command line: help text for "status" command
+	  "help" : _("Status of tftp-server"),
+	  "handler" : handlerStatus
+	 ],
+	"directory" : $[
+                //command line: help text for "directory" command
+	  "help" : _("Directory of tftp-server"),
+	  "handler" : handlerDirectory
+	 ]
+	],
+    "options"		: $[
+	 "enable" : $[
+                //command line: help text for "enable" command
+	  "help" : _("Enable tftp service")
+	 ],
+	 "disable" : $[
+                //command line: help text for "disable" command
+	  "help" : _("Disable tftp service")
+	 ],
+	 "show" : $[
+                //command line: help text for "show" command
+	  "help" : _("Show status of tftp service")
+	 ],
+	 "path" : $[
+	  "type" : "string",
+                //command line: help text for "path" command
+	  "help" : _("Set directory for tftp-server")
+	 ],
+	 "list" : $[
+                //command line: help text for "list" command
+	  "help" : _("Show directory for tftp-server")
+	 ]
+	],
+    "mappings"		: $[
+	 "status" : [ "enable", "disable", "show" ],
+	 "directory" : [ "path", "list" ]
+	]
 ];
 
 /* main ui function */
