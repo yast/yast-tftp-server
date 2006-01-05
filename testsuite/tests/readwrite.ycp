@@ -10,25 +10,32 @@
 
     include "testsuite.ycp";
 
+    map service_on = $[
+	"start": [ "3", "5"],
+	"stop":	 [ "3", "5"],
+	];
+    map service_off = $[
+	"start": [],
+	"stop":	 [],
+	];
+
     map READ = $[
 	// Runlevel:
 	"init": $[
 	    "scripts": $[
 		"exists": true,
 		"runlevel": $[
-		    "inetd": $[
-			"start": [],
-			"stop":	 [],
-			],
-		    "xinetd": $[
-			"start": [ "3", "5"],
-			"stop":	 [ "3", "5"],
-			],
+		    "inetd": service_off,
+		    "xinetd": service_on,
+		    "network": service_off,
+		    "networkmanager": service_on,
 		    ],
 		// their contents is not important for ServiceAdjust
 		"comment": $[
 		    "inetd": $[],
 		    "xinetd": $[],
+		    "network": $[],
+		    "networkmanager": $[],
 		    ],
 		],
 	    ],

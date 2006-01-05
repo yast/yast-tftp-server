@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan  5 10:33:36 CET 2006 - mvidner@suse.cz
+
+- Adjusted testsuite for changes in firewall code.
+- 2.13.0
+
+-------------------------------------------------------------------
 Tue Nov 29 15:49:11 CET 2005 - mzugec@suse.cz
 
 - feature #100125 - command line support 

@@ -1,13 +1,17 @@
 Execute	.target.bash_output "/usr/bin/lsof -i :tftp -Fc" $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
 Read	.init.scripts.exists "xinetd" true
-Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
+Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Dir	.etc.xinetd_d.tftp.section: ["tftp"]
 Read	.etc.xinetd_d.tftp.value.tftp.disable nil
 Read	.etc.xinetd_d.tftp.value.tftp.server_args "-s -v /srv/boot"
 Read	.init.scripts.exists "SuSEfirewall2_init" true
-Read	.init.scripts.runlevel "SuSEfirewall2_init" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
+Read	.init.scripts.runlevel "SuSEfirewall2_init" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Read	.init.scripts.exists "SuSEfirewall2_init" true
 Execute	.target.bash "/etc/init.d/SuSEfirewall2_init status" $["TERM":"raw"] 0
+Read	.init.scripts.exists "network" true
+Read	.init.scripts.runlevel "network" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
+Read	.init.scripts.exists "networkmanager" true
+Read	.init.scripts.runlevel "networkmanager" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Return	true
 Write	.etc.xinetd_d.tftp.value.tftp."{" "" true
 Write	.etc.xinetd_d.tftp.value_type.tftp."{" 1 true
@@ -23,8 +27,8 @@ Execute	.target.mkdir "/srv/boot" 0
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.exists "xinetd" true
 Read	.init.scripts.exists "xinetd" true
-Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
-Read	.init.scripts.comment "xinetd" $["inetd":$[], "xinetd":$[]]
+Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
+Read	.init.scripts.comment "xinetd" $["inetd":$[], "network":$[], "networkmanager":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
 Read	.init.scripts.exists "xinetd" true
 Execute	.target.bash "/etc/init.d/xinetd restart" $["TERM":"raw"] 0
