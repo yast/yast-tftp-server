@@ -8,10 +8,6 @@ Read	.init.scripts.exists "SuSEfirewall2_init" true
 Read	.init.scripts.runlevel "SuSEfirewall2_init" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Read	.init.scripts.exists "SuSEfirewall2_init" true
 Execute	.target.bash "/etc/init.d/SuSEfirewall2_init status" $["TERM":"raw"] 0
-Read	.init.scripts.exists "network" true
-Read	.init.scripts.runlevel "network" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
-Read	.init.scripts.exists "networkmanager" true
-Read	.init.scripts.runlevel "networkmanager" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Return	true
 Write	.etc.xinetd_d.tftp.value.tftp."{" "" true
 Write	.etc.xinetd_d.tftp.value_type.tftp."{" 1 true
