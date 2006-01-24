@@ -31,7 +31,7 @@ define boolean handlerStatus(map<string, string> options) ``{
 	switch(command){
 	case "show":
 				// command line: show status of tftp-server
-	   CommandLine::Print(sformat(_("Service status : %1"), TftpServer::start));
+	   CommandLine::Print(sformat(_("Service Status: %1"), TftpServer::start));
 	   break;
 	case "enable":
 	   TftpServer::start=true;
@@ -51,7 +51,7 @@ define boolean handlerDirectory(map<string, string> options) ``{
         switch(command){
         case "list":
 				// command line: show directory server by tftp-server
-           CommandLine::Print(sformat(_("Directory path : %1"), TftpServer::directory));
+           CommandLine::Print(sformat(_("Directory Path: %1"), TftpServer::directory));
            break;
         case "path":
 	   TftpServer::directory=options["path"]:"";
@@ -67,40 +67,40 @@ map cmdline_description = $[
     "guihandler"        : TftpServerSequence,
     "initialize"	: TftpServer::Read,
     "finish"		: TftpServer::Write,
-    "help"		: _("Configure tftp server"),
+    "help"		: _("Configure a TFTP server"),
     "actions"		: $[
 	"status" : $[
 		//command line: help text for "status" command
-	  "help" : _("Status of tftp-server"),
+	  "help" : _("Status of the TFTP server"),
 	  "handler" : handlerStatus
 	 ],
 	"directory" : $[
                 //command line: help text for "directory" command
-	  "help" : _("Directory of tftp-server"),
+	  "help" : _("Directory of the TFTP server"),
 	  "handler" : handlerDirectory
 	 ]
 	],
     "options"		: $[
 	 "enable" : $[
                 //command line: help text for "enable" command
-	  "help" : _("Enable tftp service")
+	  "help" : _("Enable the TFTP service")
 	 ],
 	 "disable" : $[
                 //command line: help text for "disable" command
-	  "help" : _("Disable tftp service")
+	  "help" : _("Disable the TFTP service")
 	 ],
 	 "show" : $[
                 //command line: help text for "show" command
-	  "help" : _("Show status of tftp service")
+	  "help" : _("Show the status of the TFTP service")
 	 ],
 	 "path" : $[
 	  "type" : "string",
                 //command line: help text for "path" command
-	  "help" : _("Set directory for tftp-server")
+	  "help" : _("Set the directory for the TFTP server")
 	 ],
 	 "list" : $[
                 //command line: help text for "list" command
-	  "help" : _("Show directory for tftp-server")
+	  "help" : _("Show the directory for the TFTP server")
 	 ]
 	],
     "mappings"		: $[
