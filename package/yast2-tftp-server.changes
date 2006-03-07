@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Mar  7 17:30:17 CET 2006 - mvidner@suse.cz
+
+- Converted neededforbuild to BuildRequires
+  and removed yast2-devel-packages.
+- 2.13.3
+
+-------------------------------------------------------------------
 Tue Jan 24 09:11:21 CET 2006 - mvidner@suse.cz
 
 - Merged proofread messages.
