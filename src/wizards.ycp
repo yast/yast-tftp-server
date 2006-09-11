@@ -13,9 +13,9 @@ textdomain "tftp-server";
 
 import "Label";
 import "Popup";
+import "Sequencer";
 import "Wizard";
 
-include "wizard/sequencer.ycp";
 include "tftp-server/dialogs.ycp";
 
 /**
@@ -62,7 +62,7 @@ define symbol TftpServerSequence() ``{
     Wizard::SetContentsButtons(caption, contents, "",
 	    Label::BackButton(), Label::NextButton());
 
-    any ret = WizardSequencer(aliases, sequence);
+    any ret = Sequencer::Run (aliases, sequence);
 
     UI::CloseDialog();
     return (symbol) ret;
@@ -101,7 +101,7 @@ define symbol TftpServerAutoSequence() ``{
     Wizard::SetContentsButtons(caption, contents, "",
 	    Label::BackButton(), Label::NextButton());
 
-    any ret = WizardSequencer(aliases, sequence);
+    any ret = Sequencer::Run (aliases, sequence);
 
     UI::CloseDialog();
     return (symbol) ret;
