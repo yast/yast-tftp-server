@@ -15,6 +15,7 @@
 module "TftpServer";
 textdomain "tftp-server";
 
+import "Progress";
 import "Report";
 import "Service";
 import "Summary";
@@ -128,7 +129,10 @@ global define boolean Read () ``{
 
     ParseServerArgs (server_args);
 
+    // TODO only when we have our own Progress
+    //boolean progress_orig = Progress::set (false);
     SuSEFirewall::Read ();
+    //Progress::set (progress_orig);
 
     return true;
 }
@@ -203,7 +207,10 @@ global define boolean WriteOnly () ``{
 	// off.
     }
 
+    // TODO only when we have our own Progress
+    //boolean progress_orig = Progress::set (false);
     SuSEFirewall::WriteOnly ();
+    //Progress::set (progress_orig);
 
     return true;
 }
@@ -241,7 +248,10 @@ global define boolean Write () ``{
 	Service::RunInitScript ("xinetd", "try-restart");
     }
 
+    // TODO only when we have our own Progress
+    //boolean progress_orig = Progress::set (false);
     SuSEFirewall::ActivateConfiguration ();
+    //Progress::set (progress_orig);
 
     return true;
 }

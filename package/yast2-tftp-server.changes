@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Sep 11 18:10:21 CEST 2006 - mvidner@suse.cz
+
+- Fixed Progress nesting (#202351).
+- Using autodocs-ycp.ami (with parentheses for automake-1.9.6).
+- Using Sequencer.ycp instead of deprecated sequencer.ycp.
+- 2.13.4
+
+-------------------------------------------------------------------
 Tue Mar  7 17:30:17 CET 2006 - mvidner@suse.cz
 
 - Converted neededforbuild to BuildRequires
