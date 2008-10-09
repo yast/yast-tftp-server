@@ -27,7 +27,7 @@ Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "networ
 Read	.init.scripts.comment "xinetd" $["inetd":$[], "network":$[], "networkmanager":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
 Read	.init.scripts.exists "xinetd" true
-Execute	.target.bash "/etc/init.d/xinetd restart" $["TERM":"raw"] 0
+Execute	.target.bash_output "/etc/init.d/xinetd restart" $["TERM":"raw"] $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
 Read	.init.scripts.exists "SuSEfirewall2_init" true
 Execute	.target.bash "/etc/init.d/SuSEfirewall2_init status" $["TERM":"raw"] 0
 Return	true
