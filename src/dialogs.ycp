@@ -137,7 +137,9 @@ does not exist. The server uses this as its root directory (using the <tt>-s</tt
 	    );
 
     Wizard::SetContentsButtons(caption, contents, help_text,
-	    Label::BackButton(), Label::FinishButton());
+	    Label::BackButton(), Label::OKButton());
+    Wizard::HideBackButton();
+    Wizard::SetAbortButton(`abort, Label::CancelButton() );
 
     // initialize the widget (set the current value)
     CWMFirewallInterfaces::OpenFirewallInit (fw_cwm_widget, "");
