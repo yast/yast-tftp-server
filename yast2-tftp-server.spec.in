@@ -7,7 +7,7 @@ Requires:	lsof
 
 BuildArchitectures:	noarch
 
-Summary:	Configuration of TFTP server
+Summary:	YaST2 - TFTP Server Configuration
 
 %description
 -
