@@ -10,7 +10,9 @@ BuildArchitectures:	noarch
 Summary:	YaST2 - TFTP Server Configuration
 
 %description
--
+The YaST2 component for configuring a TFTP server. TFTP stands for
+Trivial File Transfer Protocol. It is used for booting over the
+network.
 
 @PREP@
 
