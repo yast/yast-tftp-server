@@ -18,9 +18,8 @@ X-SuSE-YaST-AutoInstResource=tftp-server
 X-SuSE-YaST-Keywords=TFTP,server,boot,trivial,file,transfer,protocol
 
 Icon=yast-tftp-server
-Exec=/sbin/yast2 tftp-server 
+Exec=xdg-su -c "/sbin/yast2 tftp-server"
 
 Name=TFTP Server
 GenericName=Configure a TFTP server
-X-KDE-SubstituteUID=true
 StartupNotify=true
