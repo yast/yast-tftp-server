@@ -168,7 +168,7 @@ does not exist. The server uses this as its root directory (using the <tt>-s</tt
 	// discard the difference in disabled fields:
 	// directory is only considered if start is on
 	changed =
-	    true ||		// TODO: fw changed, #44106
+	    CWMFirewallInterfaces::OpenFirewallModified("") || // "" because method doesn't use parameter at all, nice :(
 	    start != TftpServer::start ||
 	    (start && directory != TftpServer::directory);
 
