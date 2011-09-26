@@ -58,7 +58,7 @@ define symbol TftpServerSequence() ``{
     term contents = `Label(_("Initializing..."));
 
     Wizard::CreateDialog();
-    Wizard::SetDesktopIcon("tftp-server");
+    Wizard::SetDesktopTitleAndIcon("tftp-server");
     Wizard::SetContentsButtons(caption, contents, "",
 	    Label::BackButton(), Label::NextButton());
 
@@ -97,7 +97,7 @@ define symbol TftpServerAutoSequence() ``{
     term contents = `Label(_("Initializing ..."));
 
     Wizard::CreateDialog();
-    Wizard::SetDesktopIcon("tftp-server");
+    Wizard::SetDesktopTitleAndIcon("tftp-server");
     Wizard::SetContentsButtons(caption, contents, "",
 	    Label::BackButton(), Label::NextButton());
 
