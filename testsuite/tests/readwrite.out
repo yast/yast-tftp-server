@@ -5,7 +5,6 @@ Read	.etc.xinetd_d.tftp.value.tftp.disable nil
 Read	.etc.xinetd_d.tftp.value.tftp.server_args "-s -v /srv/boot"
 Execute	.target.bash "/sbin/chkconfig -l SuSEfirewall2_init | /usr/bin/grep -q '[0-6]:on'" 0
 Execute	.target.bash "/sbin/chkconfig -l SuSEfirewall2_setup | /usr/bin/grep -q '[0-6]:on'" 0
-Execute	.target.bash "/sbin/service SuSEfirewall2_init status" $["TERM":"raw"] 0
 Return	true
 Write	.etc.xinetd_d.tftp.value.tftp."{" "" true
 Write	.etc.xinetd_d.tftp.value_type.tftp."{" 1 true
@@ -22,5 +21,4 @@ Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "networ
 Read	.init.scripts.comment "xinetd" $["inetd":$[], "network":$[], "networkmanager":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
 Execute	.target.bash_output "/sbin/service xinetd restart" $["TERM":"raw"] $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
-Execute	.target.bash "/sbin/service SuSEfirewall2_init status" $["TERM":"raw"] 0
 Return	true
