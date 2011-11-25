@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Nov 25 10:55:51 CET 2011 - locilka@suse.cz
+
+- Fixed firewall service name (bnc#729793)
+- Adapted RPM build requirements
+- 2.22.1
+
+-------------------------------------------------------------------
 Thu Nov  3 14:08:48 CET 2011 - locilka@suse.cz
 
 - Fixed testsuite
