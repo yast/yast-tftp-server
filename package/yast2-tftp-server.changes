@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Jan  7 10:09:32 UTC 2013 - locilka@suse.com
+
+- Testsuite adapted to switching Service module to systemd
+  (yast2-2.23.15)
+- Testsuite adapted to merging SuSEfirewall2_* scripts into one
+  (yast2-2.23.17)
+- 2.22.2
+
+-------------------------------------------------------------------
 Thu Mar 29 16:11:47 CEST 2012 - jsuchome@suse.cz
 
 - merge proofread texts 
