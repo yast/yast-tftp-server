@@ -1,10 +1,9 @@
 Execute	.target.bash_output "/usr/bin/lsof -i :tftp -Fc" $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
-Execute	.target.bash "/sbin/chkconfig -l xinetd | /usr/bin/grep -q '[0-6]:on'" 0
+Execute	.target.bash "/bin/systemctl is-enabled xinetd.service" 0
 Dir	.etc.xinetd_d.tftp.section: ["tftp"]
 Read	.etc.xinetd_d.tftp.value.tftp.disable nil
 Read	.etc.xinetd_d.tftp.value.tftp.server_args "-s -v /srv/boot"
-Execute	.target.bash "/sbin/chkconfig -l SuSEfirewall2_init | /usr/bin/grep -q '[0-6]:on'" 0
-Execute	.target.bash "/sbin/chkconfig -l SuSEfirewall2_setup | /usr/bin/grep -q '[0-6]:on'" 0
+Execute	.target.bash "/bin/systemctl is-enabled SuSEfirewall2.service" 0
 Return	true
 Write	.etc.xinetd_d.tftp.value.tftp."{" "" true
 Write	.etc.xinetd_d.tftp.value_type.tftp."{" 1 true
@@ -20,5 +19,5 @@ Execute	.target.mkdir "/srv/boot" 0
 Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
 Read	.init.scripts.comment "xinetd" $["inetd":$[], "network":$[], "networkmanager":$[], "xinetd":$[]]
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
-Execute	.target.bash_output "/sbin/service xinetd restart" $["TERM":"raw"] $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
+Execute	.target.bash_output "/bin/systemctl restart xinetd.service" $["TERM":"raw"] $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
 Return	true
