@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Mar 21 09:03:00 CET 2013 - locilka@suse.com
+
+- Fixed firewall service name (bnc#729793, bnc#803312)
+- 2.17.2
+
+-------------------------------------------------------------------
 Fri Nov  7 12:17:50 CET 2008 - mvidner@suse.cz
 
 - Adjusted dialog buttons according to YaST Style Guide
