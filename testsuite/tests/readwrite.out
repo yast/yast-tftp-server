@@ -16,8 +16,7 @@ Write	.etc.xinetd_d.tftp.value.tftp.server "/usr/sbin/in.tftpd" true
 Write	.etc.xinetd_d.tftp.value.tftp.server_args "-v -s /srv/boot" true
 Write	.etc.xinetd_d.tftp nil true
 Execute	.target.mkdir "/srv/boot" 0
-Read	.init.scripts.runlevel "xinetd" $["inetd":$["start":[], "stop":[]], "network":$["start":[], "stop":[]], "networkmanager":$["start":["3", "5"], "stop":["3", "5"]], "xinetd":$["start":["3", "5"], "stop":["3", "5"]]]
-Read	.init.scripts.comment "xinetd" $["inetd":$[], "network":$[], "networkmanager":$[], "xinetd":$[]]
+Execute	.target.bash "/bin/systemctl is-enabled xinetd.service" 0
 Execute	.target.bash "/usr/bin/killall in.tftpd" 0
 Execute	.target.bash_output "/bin/systemctl restart xinetd.service" $["TERM":"raw"] $["exit":0, "stderr":"", "stdout":"p3316\ncxinetd\n"]
 Return	true
