@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon May 13 14:46:05 UTC 2013 - mvidner@suse.com
+
+- adjust tests to changes in yast2-2.23.23 (for bnc#807507)
+- 2.22.3
+
+-------------------------------------------------------------------
 Mon Jan  7 10:09:32 UTC 2013 - locilka@suse.com
 
 - Testsuite adapted to switching Service module to systemd
