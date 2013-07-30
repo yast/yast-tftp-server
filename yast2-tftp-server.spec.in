@@ -14,6 +14,8 @@ Requires:	lsof
 
 BuildArchitectures:	noarch
 
+Requires:       yast2-ruby-bindings >= 1.0.0
+
 Summary:	YaST2 - TFTP Server Configuration
 
 %description
@@ -33,7 +35,7 @@ network.
 %defattr(-,root,root)
 %dir @yncludedir@/tftp-server
 @yncludedir@/tftp-server/*
-@clientdir@/tftp-server*.ycp
+@clientdir@/tftp-server*.rb
 @moduledir@/TftpServer.*
 @desktopdir@/tftp-server.desktop
 @scrconfdir@/etc_xinetd_d_tftp.scr
