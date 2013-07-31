@@ -1,27 +1,23 @@
-# Makefile.am for source/tftp-server/src
+# Sources for tftp-server
+
+module_DATA = \
+  modules/TftpServer.rb
+
+client_DATA = \
+  clients/tftp-server.rb \
+  clients/tftp-server_auto.rb
 
 yncludedir = @yncludedir@/tftp-server
+ynclude_DATA = \
+  include/tftp-server/wizards.rb \
+  include/tftp-server/dialogs.rb
 
-client_DATA =			\
-	tftp-server.ycp		\
-	tftp-server_auto.ycp
+scrconf_DATA = \
+  scrconf/etc_xinetd_d_tftp.scr
 
+desktop_DATA = \
+  desktop/tftp-server.desktop
 
-ynclude_DATA =			\
-	wizards.ycp		\
-	dialogs.ycp
-
-module_DATA =			\
-	TftpServer.ycp
-
-desktop_DATA =                  \
-	tftp-server.desktop
-
-tftp-server:
-	ln -sf . $@
-
-ycpchook = tftp-server
-
-EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(module_DATA) $(desktop_DATA)
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(desktop_DATA)
 
 include $(top_srcdir)/Makefile.am.common
