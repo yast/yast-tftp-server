@@ -198,7 +198,9 @@ module Yast
             if !Mode.config &&
                 Ops.less_than(SCR.Read(path(".target.size"), directory), 0)
               # the dir does not exist
-              ret = Popup.YesNo(Message.DirectoryDoesNotExistCreate(directory)) ? ret : nil
+              ret = Popup.YesNo(Message.DirectoryDoesNotExistCreate(directory)) ?
+                deep_copy(ret) :
+                nil
             end
           else
             UI.SetFocus(Id(:directory))
