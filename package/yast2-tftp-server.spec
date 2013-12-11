@@ -27,7 +27,7 @@ Group:	        System/YaST
 License:        GPL-2.0+
 
 BuildRequires:	perl-XML-Writer update-desktop-files yast2-testsuite
-BuildRequires:  yast2-devtools >= 3.0.6
+BuildRequires:  yast2-devtools >= 3.1.10
 # SuSEfirewall2_* scripts merget into one in yast2-2.23.17
 BuildRequires:	yast2 >= 2.23.17
 
