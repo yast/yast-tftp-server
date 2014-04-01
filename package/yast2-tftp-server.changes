@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Apr  1 09:46:19 CEST 2014 - locilka@suse.com
+
+- Testsuite adjusted to the new Systemd/Service library
+- 3.1.1
+
+-------------------------------------------------------------------
 Thu Sep 19 17:36:10 UTC 2013 - lslezak@suse.cz
 
 - do not use *.spec.in template, use *.spec file with RPM macros

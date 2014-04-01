@@ -20,3 +20,6 @@ autom4te.cache
 Makefile.am.common
 *.ami
 *.m4
+doc/autodocs/.yardoc/
+doc/autodocs/css/
+doc/autodocs/js/

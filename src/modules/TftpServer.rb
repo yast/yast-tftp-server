@@ -13,6 +13,11 @@ require "yast"
 
 module Yast
   class TftpServerClass < Module
+
+    SERVICE_NAME = "xinetd"
+
+    include Yast::Logger
+
     def main
       textdomain "tftp-server"
 
@@ -102,7 +107,7 @@ module Yast
       lines = Builtins.filter(lines) { |l| l != "xinetd" && l != "in.tftpd" }
       @foreign_servers = Builtins.mergestring(lines, ", ")
 
-      xinetd_start = Service.Enabled("xinetd")
+      xinetd_start = Service.Enabled(SERVICE_NAME)
 
       # is the config file there at all?
       sections = SCR.Dir(path(".etc.xinetd_d.tftp.section"))
@@ -197,7 +202,7 @@ module Yast
       # firewall??
 
       # enable and (re)start xinetd
-      Service.Enable("xinetd") if @start
+      Service.Enable(SERVICE_NAME) if @start
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -224,12 +229,17 @@ module Yast
       SCR.Execute(path(".target.bash"), "/usr/bin/killall in.tftpd")
 
       if @start
-        Service.Restart("xinetd")
+        Service.Restart(SERVICE_NAME)
       else
         # xinetd may be needed for other services so we never turn it
         # off. It will exit anyway if no services are configured.
         # If it is running, restart it.
-        Service.RunInitScript("xinetd", "try-restart")
+        service = SystemdService.find(SERVICE_NAME)
+        if service.nil?
+          log.error("Could not find service #{SERVICE_NAME}")
+          Report.Error(_("Cannot reload service %{name}") % { :name => SERVICE_NAME })
+        end
+        service.try_restart
       end
 
       # TODO only when we have our own Progress
