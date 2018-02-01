@@ -30,6 +30,7 @@ BuildRequires:	update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
 # SuSEfirewall2_* scripts merget into one in yast2-2.23.17
 BuildRequires:	yast2 >= 2.23.17
+BuildRequires:	augeas-lenses
 BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
 BuildRequires:  rubygem(%rb_default_ruby_abi:yast-rake)
 BuildRequires:  rubygem(%rb_default_ruby_abi:cfa)
@@ -37,6 +38,7 @@ BuildRequires:  rubygem(%rb_default_ruby_abi:cfa)
 # Wizard::SetDesktopTitleAndIcon
 Requires:	yast2 >= 2.21.22
 Requires:	lsof
+Requires:	augeas-lenses
 Requires:       rubygem(%rb_default_ruby_abi:cfa)
 
 BuildArchitectures:	noarch
@@ -68,6 +70,6 @@ rake install DESTDIR="%{buildroot}"
 %{yast_yncludedir}/tftp-server/*
 %{yast_clientdir}/tftp-server*.rb
 %{yast_moduledir}/TftpServer.*
+%{yast_libdir}/cfa
 %{yast_desktopdir}/tftp-server.desktop
-%{yast_scrconfdir}/etc_xinetd_d_tftp.scr
 %doc %{yast_docdir}

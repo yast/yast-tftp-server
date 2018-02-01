@@ -11,10 +11,17 @@
 # Input and output routines.
 require "yast"
 
+require "shellwords"
+
+require "yast2/target_file" # allow CFA to work on change scr
+require "cfa/tftp_sysconfig"
+
 module Yast
   class TftpServerClass < Module
 
-    SERVICE_NAME = "xinetd"
+    SOCKET_NAME = "tftp"
+    PACKAGE_NAME = "tftp"
+    SERVER_BIN = "in.tftp"
 
     include Yast::Logger
 
@@ -23,7 +30,7 @@ module Yast
 
       Yast.import "Progress"
       Yast.import "Report"
-      Yast.import "Service"
+      Yast.import "SystemdSocket"
       Yast.import "Summary"
       Yast.import "SuSEFirewall"
 
@@ -33,22 +40,23 @@ module Yast
       @modified = false
 
       # Required packages for operation
-      @required_packages = ["xinetd", "tftp"]
+      @required_packages = [PACKAGE_NAME]
 
-      # Start tftpd via xinetd?
+      # tftpd socket
+      @socket = SystemdSocket.find(SOCKET_NAME)
+      # if socket start tftp
       @start = false
 
-      # Image directory, last argument of in.tftpd
-      @directory = ""
-
-      # Other arguments to in.tftpd, ie. not including -s or /dir
-      @other_args = ""
-
+      # sysconfig model
+      @sysconfig = ::CFA::TftpSysconfig.new
+      # sysconfig values we are interested in. Allow to change it with UI.
+      # TODO when doing bigger changes use sysconfig model everywhere
+      @directory = "/src/tftpboot" # default value
 
       # Detect who is serving tftp:
       # Inetd may be running, it is the default. But it is ok unless it is
       # serving tftp. So we detect who is serving tftp and warn if it is
-      # not xinetd or in.tftpd.
+      # not socket or in.tftpd.
       # If nonempty, the user is notified and the module gives up.
       @foreign_servers = ""
     end
@@ -68,26 +76,6 @@ module Yast
       nil
     end
 
-    # Extract the directory and other arguments.
-    # global to make testing easier
-    # @param [String] server_args server_args from xinetd.conf
-    def ParseServerArgs(server_args)
-      # extract the last argument and kick "-s".
-      server_args_l = Builtins.filter(Builtins.splitstring(server_args, " \t")) do |s|
-        s != ""
-      end
-      sz = Builtins.size(server_args_l)
-      i = 0
-      other_args_l = Builtins.filter(server_args_l) do |s|
-        i = Ops.add(i, 1)
-        s != "-s" && i != sz
-      end
-      @directory = Ops.get(server_args_l, Ops.subtract(sz, 1), "")
-      @other_args = Builtins.mergestring(other_args_l, " ")
-
-      nil
-    end
-
     # Read all tftp-server settings
     # @return true on success
     def Read
@@ -96,36 +84,21 @@ module Yast
       out = Convert.to_map(
         SCR.Execute(path(".target.bash_output"), "/usr/bin/lsof -i :tftp -Fc")
       )
-      lines = Builtins.splitstring(Ops.get_string(out, "stdout", ""), "\n")
+      lines = Ops.get_string(out, "stdout", "").lines
       # the command is field 'c'
-      lines = Builtins.filter(lines) { |l| Builtins.substring(l, 0, 1) == "c" }
+      lines = lines.select { |l| l.start_with?("c") }
       # strip the c
-      lines = Builtins.maplist(lines) do |l|
-        Builtins.substring(l, 1, Ops.subtract(Builtins.size(l), 1))
-      end
+      lines.map! { |l| l[1..-1].strip }
       # filter out our servers
-      lines = Builtins.filter(lines) { |l| l != "xinetd" && l != "in.tftpd" }
-      @foreign_servers = Builtins.mergestring(lines, ", ")
+      lines.reject! { |l| l == "in.tftpd" }
+      @foreign_servers = lines.join(", ")
 
-      xinetd_start = Service.Enabled(SERVICE_NAME)
+      @sysconfig.load
+      @directory = @sysconfig.directory
 
-      # is the config file there at all?
-      sections = SCR.Dir(path(".etc.xinetd_d.tftp.section"))
-      disable = Convert.to_string(
-        SCR.Read(path(".etc.xinetd_d.tftp.value.tftp.disable"))
-      )
-      @start = xinetd_start && sections != [] && disable != "yes"
-
-      server_args = Convert.to_string(
-        SCR.Read(path(".etc.xinetd_d.tftp.value.tftp.server_args"))
-      )
-      if server_args == nil
-        # default
-        #	server_args = "-s /tftpboot";
-        server_args = ""
-      end
-
-      ParseServerArgs(server_args)
+      # force find of socket. It can happen if we need to install package first
+      @socket = SystemdSocket.find!(SOCKET_NAME)
+      @start = @socket.enabled?
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -143,7 +116,7 @@ module Yast
       # %1 is a command name (or a comma (, ) separated list of them)
       Builtins.sformat(
         _(
-          "This module can only use xinetd to set up TFTP.\n" +
+          "This module can only use systemd socket to set up TFTP.\n" +
             "However, another program is serving TFTP: %1.\n" +
             "Exiting.\n"
         ),
@@ -163,46 +136,17 @@ module Yast
         return false
       end
 
-      # write the config file
-      #
-      #  create it if it does not exist
-      #  could be a normal situation at initial setup
-      #  or a broken setup, ok if we fix it when writing
-      #  but that means messing up with other parameters
-      #  lets touch just the basics
-      #  the first "item" is the brace following the section start
-      SCR.Write(path(".etc.xinetd_d.tftp.value.tftp.\"{\""), "")
-      SCR.Write(path(".etc.xinetd_d.tftp.value_type.tftp.\"{\""), 1)
-      SCR.Write(
-        path(".etc.xinetd_d.tftp.value.tftp.disable"),
-        @start ? "no" : "yes"
-      )
-      if @start
-        SCR.Write(path(".etc.xinetd_d.tftp.value.tftp.socket_type"), "dgram")
-        SCR.Write(path(".etc.xinetd_d.tftp.value.tftp.protocol"), "udp")
-        SCR.Write(path(".etc.xinetd_d.tftp.value.tftp.wait"), "yes")
-        SCR.Write(path(".etc.xinetd_d.tftp.value.tftp.user"), "root")
-        SCR.Write(
-          path(".etc.xinetd_d.tftp.value.tftp.server"),
-          "/usr/sbin/in.tftpd"
-        )
-        server_args = Builtins.sformat("%1 -s %2", @other_args, @directory)
-        SCR.Write(
-          path(".etc.xinetd_d.tftp.value.tftp.server_args"),
-          server_args
-        )
-      end
+      @sysconfig.directory = @directory
+      @sysconfig.save
 
-      # flush
-      SCR.Write(path(".etc.xinetd_d.tftp"), nil)
 
       # image dir: if does not exist, create with root:root rwxr-xr-x
       SCR.Execute(path(".target.mkdir"), @directory)
-
-      # firewall??
+      # and then switch to user which is used for tftp service
+      SCR.Execute(path(".target.bash_output"), "/usr/bin/chown #{@sysconfig.user}: #{Shellwords.escape(@directory)}")
 
       # enable and (re)start xinetd
-      Service.Enable(SERVICE_NAME) if @start
+      @start ? @socket.enable : @socket.disable
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -222,25 +166,9 @@ module Yast
 
       return false if !WriteOnly()
 
-      # enable and (re)start xinetd
-
       # in.tftpd will linger around for 15 minutes waiting for a new connection
       # so we must kill it otherwise it will be using the old parameters
-      SCR.Execute(path(".target.bash"), "/usr/bin/killall in.tftpd")
-
-      if @start
-        Service.Restart(SERVICE_NAME)
-      else
-        # xinetd may be needed for other services so we never turn it
-        # off. It will exit anyway if no services are configured.
-        # If it is running, restart it.
-        service = SystemdService.find(SERVICE_NAME)
-        if service.nil?
-          log.error("Could not find service #{SERVICE_NAME}")
-          Report.Error(_("Cannot reload service %{name}") % { :name => SERVICE_NAME })
-        end
-        service.try_restart
-      end
+      SCR.Execute(path(".target.bash"), "/usr/bin/killall #{SERVER_BIN}")
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -256,8 +184,7 @@ module Yast
     def Set(settings)
       settings = deep_copy(settings)
       @start = Ops.get_boolean(settings, "start_tftpd", false)
-      @directory = Ops.get_string(settings, "tftp_directory", "")
-      @other_args = ""
+      @directory = Ops.get_string(settings, "tftp_directory", "/srv/tftpboot")
 
       nil
     end
@@ -328,9 +255,7 @@ module Yast
     publish :variable => :required_packages, :type => "list <string>"
     publish :variable => :start, :type => "boolean"
     publish :variable => :directory, :type => "string"
-    publish :variable => :other_args, :type => "string"
     publish :variable => :foreign_servers, :type => "string"
-    publish :function => :ParseServerArgs, :type => "void (string)"
     publish :function => :Read, :type => "boolean ()"
     publish :function => :ForeignServersError, :type => "string ()"
     publish :function => :WriteOnly, :type => "boolean ()"
