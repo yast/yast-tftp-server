@@ -97,7 +97,7 @@ module Yast
       # strip the c
       lines.map! { |l| l[1..-1].strip }
       # filter out our servers
-      lines.reject! { |l| l == "in.tftpd" }
+      lines.reject! { |l| ["in.tftpd", "systemd"].include?(l) }
       @foreign_servers = lines.join(", ")
 
       @sysconfig.load
