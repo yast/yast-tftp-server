@@ -3,8 +3,8 @@ ENV["Y2DIR"] = File.expand_path("../../src", __FILE__)
 require "yast"
 require "yast/rspec"
 
-# force utf-8 encoding for external
-Encoding.default_external = Encoding::UTF_8
+# stable testing in localized env
+ENV["LC_ALL"] = "en_US.UTF-8"
 
 if ENV["COVERAGE"]
   require "simplecov"

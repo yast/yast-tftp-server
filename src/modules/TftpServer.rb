@@ -65,7 +65,7 @@ module Yast
       @firewall ||= Y2Firewall::Firewalld.instance
     end
 
-    # systemd socket for tfpt
+    # systemd socket for tftp
     def socket
       @socket ||= SystemdSocket.find!(SOCKET_NAME)
     end
