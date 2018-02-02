@@ -33,6 +33,7 @@ module Yast
       Yast.import "Progress"
       Yast.import "Report"
       Yast.import "SystemdSocket"
+      Yast.import "SystemdService"
       Yast.import "Summary"
 
       # Any settings modified?
@@ -152,7 +153,13 @@ module Yast
       SCR.Execute(path(".target.bash_output"), "/usr/bin/chown #{@sysconfig.user}: #{Shellwords.escape(@directory)}")
 
       # enable and (re)start xinetd
-      @start ? @socket.enable : @socket.disable
+      if @start
+        @socket.enable
+        @socket.start
+      else
+        @socket.disable
+        @socket.stop
+      end
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -174,7 +181,7 @@ module Yast
 
       # in.tftpd will linger around for 15 minutes waiting for a new connection
       # so we must kill it otherwise it will be using the old parameters
-      SCR.Execute(path(".target.bash"), "/usr/bin/killall #{SERVER_BIN}")
+      SystemdService.find!("tftp").stop
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
