@@ -23,7 +23,6 @@ module Yast
 
     SOCKET_NAME = "tftp"
     PACKAGE_NAME = "tftp"
-    SERVER_BIN = "in.tftp"
 
     include Yast::Logger
 
