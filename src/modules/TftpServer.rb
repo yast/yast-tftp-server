@@ -51,7 +51,7 @@ module Yast
       @sysconfig = ::CFA::TftpSysconfig.new
       # sysconfig values we are interested in. Allow to change it with UI.
       # TODO when doing bigger changes use sysconfig model everywhere
-      @directory = "/src/tftpboot" # default value
+      @directory = "/srv/tftpboot" # default value
 
       # Detect who is serving tftp:
       # Systemd may be running, it is the default. But it is ok unless it is
