@@ -44,8 +44,6 @@ module Yast
       # Required packages for operation
       @required_packages = [PACKAGE_NAME]
 
-      # tftpd socket
-      @socket = SystemdSocket.find(SOCKET_NAME)
       # if socket start tftp
       @start = false
 
@@ -66,6 +64,11 @@ module Yast
     # firewall instance
     def firewall
       @firewall ||= Y2Firewall::Firewalld.instance
+    end
+
+    # systemd socket for tfpt
+    def socket
+      @socket ||= SystemdSocket.find!(SOCKET_NAME)
     end
 
     # Returns true if the settings were modified
@@ -104,8 +107,7 @@ module Yast
       @directory = @sysconfig.directory
 
       # force find of socket. It can happen if we need to install package first
-      @socket = SystemdSocket.find!(SOCKET_NAME)
-      @start = @socket.enabled?
+      @start = socket.enabled?
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -154,11 +156,11 @@ module Yast
 
       # enable and (re)start xinetd
       if @start
-        @socket.enable
-        @socket.start
+        socket.enable
+        socket.start
       else
-        @socket.disable
-        @socket.stop
+        socket.disable
+        socket.stop
       end
 
       # TODO only when we have our own Progress
