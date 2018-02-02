@@ -68,7 +68,7 @@ module Yast
 
       # firewall widget using CWM
       fw_settings = {
-        "services"        => ["service:tftp"],
+        "services"        => ["tftp"],
         "display_details" => true
       }
       fw_cwm_widget = CWMFirewallInterfaces.CreateOpenFirewallWidget(

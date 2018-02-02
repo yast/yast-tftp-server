@@ -17,7 +17,7 @@
 
 
 Name:           yast2-tftp-server
-Version:        3.1.3
+Version:        4.0.0
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -26,14 +26,20 @@ Source0:        %{name}-%{version}.tar.bz2
 Group:	        System/YaST
 License:        GPL-2.0+
 
-BuildRequires:	perl-XML-Writer update-desktop-files yast2-testsuite
+BuildRequires:	update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
-# SuSEfirewall2_* scripts merget into one in yast2-2.23.17
-BuildRequires:	yast2 >= 2.23.17
+BuildRequires:	augeas-lenses
+# SuSEFirewall2 replace by firewalld (fate#323460)
+BuildRequires:  yast2 >= 4.0.39
+BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
+BuildRequires:  rubygem(%rb_default_ruby_abi:yast-rake)
+BuildRequires:  rubygem(%rb_default_ruby_abi:cfa)
 
-# Wizard::SetDesktopTitleAndIcon
-Requires:	yast2 >= 2.21.22
+# SuSEFirewall2 replace by firewalld (fate#323460)
+Requires:       yast2 >= 4.0.39
 Requires:	lsof
+Requires:	augeas-lenses
+Requires:       rubygem(%rb_default_ruby_abi:cfa)
 
 BuildArchitectures:	noarch
 
@@ -49,11 +55,13 @@ network.
 %prep
 %setup -n %{name}-%{version}
 
+%check
+rake test:unit
+
 %build
-%yast_build
 
 %install
-%yast_install
+rake install DESTDIR="%{buildroot}"
 
 
 %files
@@ -62,6 +70,6 @@ network.
 %{yast_yncludedir}/tftp-server/*
 %{yast_clientdir}/tftp-server*.rb
 %{yast_moduledir}/TftpServer.*
+%{yast_libdir}/cfa
 %{yast_desktopdir}/tftp-server.desktop
-%{yast_scrconfdir}/etc_xinetd_d_tftp.scr
 %doc %{yast_docdir}

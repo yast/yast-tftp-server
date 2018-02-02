@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Feb  2 14:24:30 UTC 2018 - jreidinger@suse.com
+
+- switch from xinetd to systemd socket activation (fate#323373)
+- switch from SuSEFirewall to firewalld (fate#323460)
+- 4.0.0
+
+-------------------------------------------------------------------
 Thu Jun  9 11:16:24 UTC 2016 - igonzalezsosa@suse.com
 
 - Stop generating autodocs (fate#320356)
