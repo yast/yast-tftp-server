@@ -23,3 +23,7 @@ Makefile.am.common
 doc/autodocs/.yardoc/
 doc/autodocs/css/
 doc/autodocs/js/
+
+/.yardoc
+/coverage
+/doc
