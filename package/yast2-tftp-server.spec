@@ -28,15 +28,15 @@ License:        GPL-2.0+
 
 BuildRequires:	update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
-# SuSEfirewall2_* scripts merget into one in yast2-2.23.17
-BuildRequires:	yast2 >= 2.23.17
 BuildRequires:	augeas-lenses
+# SuSEFirewall2 replace by firewalld (fate#323460)
+BuildRequires:  yast2 >= 4.0.39
 BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
 BuildRequires:  rubygem(%rb_default_ruby_abi:yast-rake)
 BuildRequires:  rubygem(%rb_default_ruby_abi:cfa)
 
-# Wizard::SetDesktopTitleAndIcon
-Requires:	yast2 >= 2.21.22
+# SuSEFirewall2 replace by firewalld (fate#323460)
+Requires:       yast2 >= 4.0.39
 Requires:	lsof
 Requires:	augeas-lenses
 Requires:       rubygem(%rb_default_ruby_abi:cfa)

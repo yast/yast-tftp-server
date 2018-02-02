@@ -15,6 +15,8 @@ require "shellwords"
 
 require "yast2/target_file" # allow CFA to work on change scr
 require "cfa/tftp_sysconfig"
+require "y2firewall/firewalld"
+
 
 module Yast
   class TftpServerClass < Module
@@ -32,7 +34,6 @@ module Yast
       Yast.import "Report"
       Yast.import "SystemdSocket"
       Yast.import "Summary"
-      Yast.import "SuSEFirewall"
 
       # Any settings modified?
       # As we have only a single dialog which handles it by itself,
@@ -59,6 +60,11 @@ module Yast
       # not socket or in.tftpd.
       # If nonempty, the user is notified and the module gives up.
       @foreign_servers = ""
+    end
+
+    # firewall instance
+    def firewall
+      @firewall ||= Y2Firewall::Firewalld.instance
     end
 
     # Returns true if the settings were modified
@@ -102,7 +108,7 @@ module Yast
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
-      SuSEFirewall.Read
+      firewall.read
       #Progress::set (progress_orig);
 
       true
@@ -150,7 +156,7 @@ module Yast
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
-      SuSEFirewall.WriteOnly
+      firewall.write_only
       #Progress::set (progress_orig);
 
       true
@@ -172,7 +178,7 @@ module Yast
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
-      SuSEFirewall.ActivateConfiguration
+      firewall.reload
       #Progress::set (progress_orig);
 
       true
