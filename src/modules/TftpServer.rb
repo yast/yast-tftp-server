@@ -54,9 +54,9 @@ module Yast
       @directory = "/src/tftpboot" # default value
 
       # Detect who is serving tftp:
-      # Inetd may be running, it is the default. But it is ok unless it is
+      # Systemd may be running, it is the default. But it is ok unless it is
       # serving tftp. So we detect who is serving tftp and warn if it is
-      # not socket or in.tftpd.
+      # not systemd socket/service or in.tftpd.
       # If nonempty, the user is notified and the module gives up.
       @foreign_servers = ""
     end
@@ -90,7 +90,7 @@ module Yast
     # @return true on success
     def Read
       # foreign_servers:
-      # get command names via lsof, filter out xinetd and in.tftpd
+      # get command names via lsof, filter out systemd and in.tftpd
       out = Convert.to_map(
         SCR.Execute(path(".target.bash_output"), "/usr/bin/lsof -i :tftp -Fc")
       )
@@ -154,7 +154,7 @@ module Yast
       # and then switch to user which is used for tftp service
       SCR.Execute(path(".target.bash_output"), "/usr/bin/chown #{@sysconfig.user}: #{Shellwords.escape(@directory)}")
 
-      # enable and (re)start xinetd
+      # enable and (re)start systemd socket
       if @start
         socket.enable
         socket.start
@@ -174,11 +174,6 @@ module Yast
     # Write all tftp-server settings
     # @return true on success
     def Write
-      # write the config file
-      # image dir: if does not exist, create with root:root rwxr-xr-x
-      # firewall??
-      # enable and (re)start xinetd
-
       return false if !WriteOnly()
 
       # in.tftpd will linger around for 15 minutes waiting for a new connection
