@@ -230,6 +230,16 @@ module Yast
       deep_copy(settings)
     end
 
+
+    # Mergeing config to existing system configuration. It is useful for delayed write.
+    # So if package will be installed later this method re-apply changes on top of newly parsed
+    # file.
+    def merge_to_system
+      config = Export()
+      Read()
+      Import(config)
+    end
+
     # @return Html formatted configuration summary
     def Summary
       summary = ""

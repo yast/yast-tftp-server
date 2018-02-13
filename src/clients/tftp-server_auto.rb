@@ -77,6 +77,8 @@ module Yast
         Progress.set(@progress_orig)
       # Write givven settings
       elsif @func == "Write"
+        # Merging current settings with already existing configuration.
+        TftpServer.merge_to_system
         Yast.import "Progress"
         @progress_orig = Progress.set(false)
         @ret = TftpServer.Write
@@ -90,11 +92,10 @@ module Yast
         @ret = false
       end
 
-      return deep_copy(@ret)
-
       Builtins.y2debug("ret=%1", @ret)
       Builtins.y2milestone("TftpServer auto finished")
       Builtins.y2milestone("----------------------------------------")
+      return deep_copy(@ret)
     end
   end
 end
