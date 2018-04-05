@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr  5 10:10:45 UTC 2018 - jreidinger@suse.com
+
+- do not report error when cloning without tftp installed
+  (bsc#1081688)
+- 4.0.2
+
+-------------------------------------------------------------------
 Tue Feb 13 10:06:15 CET 2018 - schubi@suse.de
 
 - Merging changed settings with already existing configuration.
