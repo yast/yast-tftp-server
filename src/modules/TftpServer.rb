@@ -29,6 +29,7 @@ module Yast
     def main
       textdomain "tftp-server"
 
+      Yast.import "Package"
       Yast.import "Progress"
       Yast.import "Report"
       Yast.import "SystemdSocket"
@@ -88,6 +89,9 @@ module Yast
     # Read all tftp-server settings
     # @return true on success
     def Read
+      # if package is not installed, then read is easy
+      return true unless Package.Installed(PACKAGE_NAME)
+
       # foreign_servers:
       # get command names via lsof, filter out systemd and in.tftpd
       out = Convert.to_map(
