@@ -6,6 +6,10 @@
 # Authors:	Martin Vidner <mvidner@suse.cz>
 #
 # $Id$
+
+require "systemd_journal/entries_dialog"
+require "systemd_journal/query"
+
 module Yast
   module TftpServerDialogsInclude
     def initialize_tftp_server_dialogs(include_target)
@@ -15,7 +19,6 @@ module Yast
 
       Yast.import "CWMFirewallInterfaces"
       Yast.import "Label"
-      Yast.import "LogView"
       Yast.import "Message"
       Yast.import "Mode"
       Yast.import "Package"
@@ -188,7 +191,9 @@ module Yast
           )
           UI.ChangeWidget(Id(:directory), :Value, directory) if directory != nil
         elsif ret == :viewlog
-          LogView.DisplayFiltered("/var/log/messages", "\\(tftp\\|TFTP\\)")
+          # show both service and socket logs for current boot
+          query = SystemdJournal::Query.new(interval: "0", filters: { "unit" => ["tftp.service", "tftp.socket"] })
+          SystemdJournal::EntriesDialog.new(query: query).run
         end
 
         # validity checks
