@@ -37,8 +37,8 @@ BuildRequires:  rubygem(%rb_default_ruby_abi:cfa)
 
 # SuSEFirewall2 replace by firewalld (fate#323460)
 Requires:       yast2 >= 4.0.39
-# for reading logs from journal
-Requires:       yast2-journal >= 4.1.0
+# Namespace Y2Journal
+Requires:       yast2-journal >= 4.1.1
 Requires:	lsof
 Requires:	augeas-lenses
 Requires:       rubygem(%rb_default_ruby_abi:cfa)
