@@ -7,8 +7,7 @@
 #
 # $Id$
 
-require "systemd_journal/entries_dialog"
-require "systemd_journal/query"
+require "y2journal"
 
 module Yast
   module TftpServerDialogsInclude
@@ -192,8 +191,8 @@ module Yast
           UI.ChangeWidget(Id(:directory), :Value, directory) if directory != nil
         elsif ret == :viewlog
           # show both service and socket logs for current boot
-          query = SystemdJournal::Query.new(interval: "0", filters: { "unit" => ["tftp.service", "tftp.socket"] })
-          SystemdJournal::EntriesDialog.new(query: query).run
+          query = Y2Journal::Query.new(interval: "0", filters: { "unit" => ["tftp.service", "tftp.socket"] })
+          Y2Journal::EntriesDialog.new(query: query).run
         end
 
         # validity checks
