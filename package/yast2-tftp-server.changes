@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Jun 26 14:11:13 UTC 2018 - jlopez@suse.com
+
+- Adapt code to use new namespace Y2Journal
+  (needed for fate#319428).
+- 4.1.1
+
+-------------------------------------------------------------------
 Tue Jun 19 12:22:19 UTC 2018 - jreidinger@suse.com
 
 - Use yast2-journal to read logs from journal (bsc#1008493)
