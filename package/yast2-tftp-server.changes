@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 27 12:48:32 CEST 2018 - schubi@suse.de
+
+- Added additional searchkeys to desktop file (fate#321043).
+- 4.0.3
+
+-------------------------------------------------------------------
 Thu Apr  5 10:10:45 UTC 2018 - jreidinger@suse.com
 
 - do not report error when cloning without tftp installed
