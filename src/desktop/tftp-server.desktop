@@ -13,7 +13,7 @@ X-SuSE-YaST-AutoInst=all
 X-SuSE-YaST-Geometry=
 X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=tftp-server
-X-SuSE-YaST-Keywords=TFTP,server,boot,trivial,file,transfer,protocol
+X-SuSE-YaST-Keywords=TFTP,server,boot,trivial,file,transfer,protocol,network
 
 Icon=yast-tftp-server
 Exec=xdg-su -c "/sbin/yast2 tftp-server"
