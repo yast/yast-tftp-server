@@ -29,14 +29,14 @@ License:        GPL-2.0-or-later
 BuildRequires:	update-desktop-files
 BuildRequires:  yast2-devtools >= 3.1.10
 BuildRequires:	augeas-lenses
-# SuSEFirewall2 replace by firewalld (fate#323460)
-BuildRequires:  yast2 >= 4.0.39
+# Yast2::Systemd::Service
+BuildRequires:  yast2 >= 4.1.3
 BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
 BuildRequires:  rubygem(%rb_default_ruby_abi:yast-rake)
 BuildRequires:  rubygem(%rb_default_ruby_abi:cfa)
 
-# SuSEFirewall2 replace by firewalld (fate#323460)
-Requires:       yast2 >= 4.0.39
+# Yast2::Systemd::Service
+Requires:       yast2 >= 4.1.3
 # Namespace Y2Journal
 Requires:       yast2-journal >= 4.1.1
 Requires:	lsof
