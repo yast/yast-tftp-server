@@ -10,6 +10,8 @@
 # Representation of the configuration of TftpServer.
 # Input and output routines.
 require "yast"
+require "yast2/systemd/service"
+require "yast2/systemd/socket"
 
 require "shellwords"
 
@@ -32,8 +34,6 @@ module Yast
       Yast.import "Package"
       Yast.import "Progress"
       Yast.import "Report"
-      Yast.import "SystemdSocket"
-      Yast.import "SystemdService"
       Yast.import "Summary"
 
       # Any settings modified?
@@ -68,7 +68,7 @@ module Yast
 
     # systemd socket for tftp
     def socket
-      @socket ||= SystemdSocket.find!(SOCKET_NAME)
+      @socket ||= Yast2::Systemd::Socket.find!(SOCKET_NAME)
     end
 
     # Returns true if the settings were modified
@@ -181,7 +181,7 @@ module Yast
 
       # in.tftpd will linger around for 15 minutes waiting for a new connection
       # so we must kill it otherwise it will be using the old parameters
-      SystemdService.find!("tftp").stop
+      Yast2::Systemd::Service.find!("tftp").stop
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
