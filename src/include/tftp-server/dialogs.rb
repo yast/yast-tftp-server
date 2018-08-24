@@ -65,10 +65,6 @@ module Yast
     def MainDialog
       Wizard.SetScreenShotName("tftp-server-1-main")
 
-      # start = TftpServer.start
-      directory = TftpServer.directory
-      changed = false
-
       # Tftp-server dialog caption
       caption = _("TFTP Server Configuration")
 
