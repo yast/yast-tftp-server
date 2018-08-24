@@ -18,15 +18,20 @@ require "shellwords"
 require "yast2/target_file" # allow CFA to work on change scr
 require "cfa/tftp_sysconfig"
 require "y2firewall/firewalld"
-
+require "yast2/system_service"
 
 module Yast
   class TftpServerClass < Module
+    include Yast::Logger
 
     SOCKET_NAME = "tftp"
     PACKAGE_NAME = "tftp"
 
-    include Yast::Logger
+    # @!method start
+    #   Whether the socket should be enabled and started
+    #
+    #   @return [Boolean]
+    attr_reader :start
 
     def main
       textdomain "tftp-server"
@@ -35,6 +40,7 @@ module Yast
       Yast.import "Progress"
       Yast.import "Report"
       Yast.import "Summary"
+      Yast.import "Mode"
 
       # Any settings modified?
       # As we have only a single dialog which handles it by itself,
@@ -59,6 +65,13 @@ module Yast
       # not systemd socket/service or in.tftpd.
       # If nonempty, the user is notified and the module gives up.
       @foreign_servers = ""
+    end
+
+    # Service to configure
+    #
+    # @return [Yast2::SystemService]
+    def service
+      @service ||= Yast2::SystemService.find(PACKAGE_NAME)
     end
 
     # firewall instance
@@ -157,13 +170,15 @@ module Yast
       # and then switch to user which is used for tftp service
       SCR.Execute(path(".target.bash_output"), "/usr/bin/chown #{@sysconfig.user}: #{Shellwords.escape(@directory)}")
 
-      # enable and (re)start systemd socket
-      if @start
-        socket.enable
-        socket.start
-      else
-        socket.disable
-        socket.stop
+      if Mode.auto || Mode.commandline
+        # enable and (re)start systemd socket
+        if start
+          socket.enable
+          socket.start
+        else
+          socket.disable
+          socket.stop
+        end
       end
 
       # TODO only when we have our own Progress
@@ -179,9 +194,13 @@ module Yast
     def Write
       return false if !WriteOnly()
 
-      # in.tftpd will linger around for 15 minutes waiting for a new connection
-      # so we must kill it otherwise it will be using the old parameters
-      Yast2::Systemd::Service.find!("tftp").stop
+      if Mode.auto || Mode.commandline
+        # in.tftpd will linger around for 15 minutes waiting for a new connection
+        # so we must kill it otherwise it will be using the old parameters
+        Yast2::Systemd::Service.find!("tftp").stop
+      else
+        service.save
+      end
 
       # TODO only when we have our own Progress
       #boolean progress_orig = Progress::set (false);
@@ -201,7 +220,6 @@ module Yast
 
       nil
     end
-
 
     # Get all tftp-server settings from the first parameter
     # (For use by autoinstallation.)
@@ -234,7 +252,6 @@ module Yast
       deep_copy(settings)
     end
 
-
     # Mergeing config to existing system configuration. It is useful for delayed write.
     # So if package will be installed later this method re-apply changes on top of newly parsed
     # file.
@@ -261,12 +278,9 @@ module Yast
       summary
     end
 
-    # Return needed packages and packages to be removed
-    # during autoinstallation.
-    # @return [Hash] of lists.
+    # Return needed packages and packages to be removed during autoinstallation
     #
-    #
-
+    # @return [Hash] of lists
     def AutoPackages
       install_pkgs = deep_copy(@required_packages)
       remove_pkgs = []
