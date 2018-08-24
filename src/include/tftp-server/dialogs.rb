@@ -161,7 +161,7 @@ module Yast
             "<tt>/tftpboot</tt>. The directory will be created if it does not exist. \n" +
             "The server uses this as its root directory (using the <tt>-s</tt> option).</p>\n"
         ) +
-        firewall_widget["help"] || ""
+        (firewall_widget["help"] || "")
     end
 
     # Widget to define state and start mode of the service
