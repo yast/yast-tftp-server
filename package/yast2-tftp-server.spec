@@ -75,3 +75,4 @@ rake install DESTDIR="%{buildroot}"
 %{yast_libdir}/cfa
 %{yast_desktopdir}/tftp-server.desktop
 %doc %{yast_docdir}
+%license COPYING
