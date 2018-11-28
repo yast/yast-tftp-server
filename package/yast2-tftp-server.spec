@@ -74,6 +74,6 @@ rake install DESTDIR="%{buildroot}"
 %{yast_moduledir}/TftpServer.*
 %{yast_libdir}/cfa
 %{yast_desktopdir}/tftp-server.desktop
-%{_datadir}/icons/*
+%{yast_icondir}
 %doc %{yast_docdir}
 %license COPYING
