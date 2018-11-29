@@ -17,7 +17,7 @@
 
 
 Name:           yast2-tftp-server
-Version:        4.1.4
+Version:        4.1.5
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -74,5 +74,6 @@ rake install DESTDIR="%{buildroot}"
 %{yast_moduledir}/TftpServer.*
 %{yast_libdir}/cfa
 %{yast_desktopdir}/tftp-server.desktop
+%{yast_icondir}
 %doc %{yast_docdir}
 %license COPYING
