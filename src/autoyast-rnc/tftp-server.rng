@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.suse.com/1.0/yast2ns" xmlns="http://relaxng.org/ns/structure/1.0">
+  <define name="tftp-server">
+    <element name="tftp-server">
+      <interleave>
+        <optional>
+          <element name="tftp_directory">
+            <text/>
+          </element>
+        </optional>
+        <optional>
+          <element name="start_tftpd">
+            <ref name="BOOLEAN"/>
+          </element>
+        </optional>
+      </interleave>
+    </element>
+  </define>
+</grammar>
