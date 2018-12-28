@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Dec 28 14:47:35 CET 2018 - schubi@suse.de
+
+- Added tftp-server.rnc schema file (bsc#1108199).
+- 4.1.6
+
+-------------------------------------------------------------------
 Mon Nov 26 05:29:05 UTC 2018 - Noah Davis <noahadvs@gmail.com>
 
 - Provide icon with module (boo#1109310)
