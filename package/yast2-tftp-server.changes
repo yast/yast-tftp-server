@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb  4 13:34:51 CET 2019 - schubi@suse.de
+
+- Added X-SuSE-YaST-AutoInstSchema to desktop file (bsc#1123830).
+- 4.1.7
+
+-------------------------------------------------------------------
 Fri Dec 28 14:47:35 CET 2018 - schubi@suse.de
 
 - Added tftp-server.rnc schema file (bsc#1108199).
