@@ -13,6 +13,7 @@ X-SuSE-YaST-AutoInst=all
 X-SuSE-YaST-Geometry=
 X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=tftp-server
+X-SuSE-YaST-AutoInstSchema=tftp-server.rnc
 X-SuSE-YaST-Keywords=TFTP,server,boot,trivial,file,transfer,protocol,network
 
 Icon=yast-tftp-server
