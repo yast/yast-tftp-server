@@ -199,6 +199,7 @@ module Yast
         # so we must kill it otherwise it will be using the old parameters
         Yast2::Systemd::Service.find!("tftp").stop
       else
+        socket.start if service.active?
         service.save
       end
 
