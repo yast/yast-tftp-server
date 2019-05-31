@@ -19,6 +19,7 @@ X-SuSE-YaST-Keywords=TFTP,server,boot,trivial,file,transfer,protocol,network
 Icon=yast-tftp-server
 Exec=xdg-su -c "/sbin/yast2 tftp-server"
 
-Name=TFTP Server
-GenericName=Configure a TFTP server
+Name=YaST TFTP Server
+GenericName=TFTP Server
+Comment=Configure a TFTP server
 StartupNotify=true
