@@ -46,7 +46,7 @@ module Yast
       contents = Label(_("Initializing..."))
 
       Wizard.CreateDialog
-      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.TFTPServer")
+      Wizard.SetDesktopTitleAndIcon("org.opensuse.yast.TFTPServer")
       Wizard.SetContentsButtons(
         caption,
         contents,
@@ -81,7 +81,7 @@ module Yast
       contents = Label(_("Initializing ..."))
 
       Wizard.CreateDialog
-      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.TFTPServer")
+      Wizard.SetDesktopTitleAndIcon("org.opensuse.yast.TFTPServer")
       Wizard.SetContentsButtons(
         caption,
         contents,
