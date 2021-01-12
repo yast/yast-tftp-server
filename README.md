@@ -1,5 +1,9 @@
 # YaST - The TFTP Server Module #
 
-[![Travis Build](https://travis-ci.org/yast/yast-tftp-server.svg?branch=master)](https://travis-ci.org/yast/yast-tftp-server)
-[![Jenkins Build](http://img.shields.io/jenkins/s/https/ci.opensuse.org/yast-tftp-server-master.svg)](https://ci.opensuse.org/view/Yast/job/yast-tftp-server-master/)
+[![Workflow Status](https://github.com/yast/yast-tftp-server/workflows/CI/badge.svg?branch=master)](
+https://github.com/yast/yast-tftp-server/actions?query=branch%3Amaster)
+[![Jenkins Status](https://ci.opensuse.org/buildStatus/icon?job=yast-yast-tftp-server-master)](
+https://ci.opensuse.org/view/Yast/job/yast-yast-tftp-server-master/)
+[![Coverage Status](https://img.shields.io/coveralls/yast/yast-tftp-server.svg)](https://coveralls.io/r/yast/yast-tftp-server?branch=master)
 
+The YaST module to setup and configure TFTP server.
