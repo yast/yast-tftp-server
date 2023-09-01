@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp5/containers/yast-ruby
+      image: registry.opensuse.org/yast/sle-15/sp6/containers/yast-ruby
 
     steps:
 
@@ -42,7 +42,7 @@ jobs:
 
 #  Rubocop:
 #    runs-on: ubuntu-latest
-#    container: registry.opensuse.org/yast/sle-15/sp5/containers/yast-ruby:latest
+#    container: registry.opensuse.org/yast/sle-15/sp6/containers/yast-ruby:latest
 #
 #    steps:
 #
@@ -59,7 +59,7 @@ jobs:
       fail-fast: false
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp5/containers/yast-ruby
+      image: registry.opensuse.org/yast/sle-15/sp6/containers/yast-ruby
 
     steps:
 
@@ -76,7 +76,7 @@ jobs:
       fail-fast: false
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp5/containers/yast-ruby
+      image: registry.opensuse.org/yast/sle-15/sp6/containers/yast-ruby
 
     steps:
 
@@ -96,7 +96,7 @@ jobs:
       fail-fast: false
 
     container:
-      image: registry.opensuse.org/yast/sle-15/sp5/containers/yast-ruby
+      image: registry.opensuse.org/yast/sle-15/sp6/containers/yast-ruby
 
     steps:
 
