@@ -18,7 +18,7 @@
 
 Name:           yast2-tftp-server
 Summary:        YaST2 - TFTP Server Configuration
-Version:        5.0.0
+Version:        5.0.1
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-or-later
@@ -26,7 +26,6 @@ Url:            https://github.com/yast/yast-tftp-server
 
 Source0:        %{name}-%{version}.tar.bz2
 
-BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 4.2.2
 BuildRequires:  augeas-lenses
 # Yast2::Systemd::Service
